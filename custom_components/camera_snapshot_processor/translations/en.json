@@ -1,0 +1,140 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select Source Camera",
+        "description": "Choose the camera entity you want to process snapshots from.",
+        "data": {
+          "source_camera": "Source Camera"
+        }
+      },
+      "configure": {
+        "title": "Configure Camera Processing",
+        "description": "Configure all settings for the processed camera.",
+        "data": {
+          "width": "Width (pixels)",
+          "height": "Height (pixels)",
+          "keep_ratio": "Keep aspect ratio",
+          "quality": "JPEG Quality (%)",
+          "crop_enabled": "Enable cropping",
+          "crop_x": "Crop X position",
+          "crop_y": "Crop Y position",
+          "crop_width": "Crop width",
+          "crop_height": "Crop height",
+          "datetime_enabled": "Show date/time",
+          "datetime_format": "Date/time format",
+          "datetime_position": "Date/time position",
+          "text_enabled": "Show custom text",
+          "text_value": "Custom text",
+          "text_position": "Text position",
+          "overlay_font_size": "Font size",
+          "overlay_color": "Text color (hex)",
+          "overlay_background": "Background color (hex with alpha)",
+          "rtsp_url": "RTSP URL (optional)"
+        },
+        "data_description": {
+          "width": "Target width",
+          "height": "Target height",
+          "datetime_format": "Python strftime format (e.g. %Y-%m-%d %H:%M:%S)",
+          "overlay_color": "Hex color code (e.g. #FFFFFF for white)",
+          "overlay_background": "Hex color with alpha (e.g. #00000000 for transparent)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Camera is already configured",
+      "no_cameras": "No cameras found in your Home Assistant instance"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Camera Snapshot Processor",
+        "menu_options": {
+          "dimensions": "Image Dimensions & Quality",
+          "crop": "Crop Settings",
+          "overlays": "Text & DateTime Overlays",
+          "state_icons": "State-Based Icons",
+          "stream": "Stream Settings",
+          "preview": "Generate Test Snapshot"
+        }
+      },
+      "dimensions": {
+        "title": "Image Dimensions",
+        "description": "Update image dimensions and quality settings.",
+        "data": {
+          "width": "Width (pixels)",
+          "height": "Height (pixels)",
+          "keep_ratio": "Keep aspect ratio",
+          "quality": "JPEG Quality (%)"
+        }
+      },
+      "crop": {
+        "title": "Crop Settings",
+        "description": "Update image cropping settings.",
+        "data": {
+          "crop_enabled": "Enable cropping",
+          "crop_x": "Crop X position",
+          "crop_y": "Crop Y position",
+          "crop_width": "Crop width",
+          "crop_height": "Crop height"
+        }
+      },
+      "overlays": {
+        "title": "Overlays",
+        "description": "Update text and datetime overlay settings.",
+        "data": {
+          "datetime_enabled": "Show date/time",
+          "datetime_format": "Date/time format",
+          "datetime_position": "Date/time position",
+          "text_enabled": "Show custom text",
+          "text_value": "Custom text",
+          "text_position": "Text position",
+          "overlay_font_size": "Font size",
+          "overlay_color": "Text color (hex)",
+          "overlay_background": "Background color (hex with alpha)"
+        }
+      },
+      "state_icons": {
+        "title": "State-Based Icons",
+        "description": "Add conditional icons that display based on entity states.",
+        "data": {
+          "action": "Action"
+        }
+      },
+      "add_state_icon": {
+        "title": "Add State Icon",
+        "description": "Configure an icon that changes based on entity state.",
+        "data": {
+          "entity": "Entity to monitor",
+          "state_on": "State value for 'ON' (e.g. on, open, home)",
+          "text_on": "Text to show when ON",
+          "color_on": "Color when ON (hex)",
+          "state_off": "State value for 'OFF' (e.g. off, closed, away)",
+          "text_off": "Text to show when OFF",
+          "color_off": "Color when OFF (hex)",
+          "position": "Position on image"
+        }
+      },
+      "stream": {
+        "title": "Stream Settings",
+        "description": "Update stream settings. Leave empty to use source camera's stream.",
+        "data": {
+          "rtsp_url": "RTSP URL (optional)"
+        }
+      },
+      "preview": {
+        "title": "Test Snapshot Preview",
+        "description": "Generate a test snapshot to preview your settings.",
+        "data": {
+          "action": "Action"
+        }
+      }
+    }
+  }
+}

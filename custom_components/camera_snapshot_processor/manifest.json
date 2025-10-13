@@ -1,0 +1,19 @@
+{
+  "domain": "camera_snapshot_processor",
+  "name": "Camera Snapshot Processor",
+  "codeowners": [
+    "@Patras3"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/Patras3/camera-snapshot-processor",
+  "issue_tracker": "https://github.com/Patras3/camera-snapshot-processor/issues",
+  "requirements": [
+    "Pillow>=10.0.0"
+  ],
+  "dependencies": [
+    "camera"
+  ],
+  "version": "1.0.0",
+  "iot_class": "local_polling",
+  "integration_type": "device"
+}

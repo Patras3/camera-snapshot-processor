@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Camera Snapshot Processor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="styles.css?v=1.0.0">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar: Camera List -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>📷 Snapshot Processor</h2>
+                <p class="subtitle">Manage your cameras</p>
+            </div>
+
+            <div class="camera-list" id="camera-list">
+                <!-- Cameras will be dynamically added here -->
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-primary btn-block" id="add-camera-btn">
+                    ➕ Add Camera
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content: Camera Configuration -->
+        <div class="main-content">
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state">
+                <div class="empty-state-content">
+                    <div class="empty-icon">📸</div>
+                    <h2>No Camera Selected</h2>
+                    <p>Add a camera to get started with snapshot processing</p>
+                    <button class="btn btn-primary btn-lg" id="add-camera-btn-empty">
+                        ➕ Add Your First Camera
+                    </button>
+                </div>
+            </div>
+
+            <!-- Camera Configuration View -->
+            <div id="config-view" class="config-view" style="display: none;">
+                <div class="config-header">
+                    <div class="header-info">
+                        <h1 id="camera-title">Camera Configuration</h1>
+                        <p class="camera-source" id="camera-source"></p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="refresh-preview-btn">🔄 Refresh</button>
+                        <button class="btn btn-primary" id="save-config-btn">💾 Save</button>
+                        <button class="btn btn-danger" id="delete-camera-btn">🗑️ Delete</button>
+                    </div>
+                </div>
+
+                <div class="content-grid">
+                    <!-- Left: Configuration Tabs -->
+                    <div class="config-panel">
+                        <div class="tabs">
+                            <button class="tab active" data-tab="dimensions">📐 Dimensions</button>
+                            <button class="tab" data-tab="crop">✂️ Crop</button>
+                            <button class="tab" data-tab="overlays">🎨 Overlays</button>
+                            <button class="tab" data-tab="state-icons">💡 State Icons</button>
+                            <button class="tab" data-tab="stream">📡 Stream</button>
+                        </div>
+
+                        <div class="tab-content">
+                            <!-- Dimensions Tab -->
+                            <div class="tab-pane active" id="tab-dimensions">
+                                <h3>Image Dimensions & Quality</h3>
+
+                                <div class="form-group checkbox-group">
+                                    <label>
+                                        <input type="checkbox" id="keep_ratio" checked>
+                                        <span>Keep Aspect Ratio (height-based)</span>
+                                    </label>
+                                    <small class="help-text">When enabled, width is automatically calculated based on height to maintain aspect ratio</small>
+                                </div>
+
+                                <div class="form-group" id="width-control">
+                                    <label for="width">Width (px)</label>
+                                    <input type="range" id="width-slider" min="1" max="7680" value="1920">
+                                    <input type="number" id="width" min="1" max="7680" value="1920" style="width: 100px; margin-left: 10px;">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="height">Height (px)</label>
+                                    <input type="range" id="height-slider" min="1" max="4320" value="1080">
+                                    <input type="number" id="height" min="1" max="4320" value="1080" style="width: 100px; margin-left: 10px;">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quality">Quality (%)</label>
+                                    <input type="range" id="quality" min="1" max="100" value="85">
+                                    <span class="value-display" id="quality-value">85</span>
+                                </div>
+                            </div>
+
+                            <!-- Crop Tab -->
+                            <div class="tab-pane" id="tab-crop">
+                                <h3>Crop Settings</h3>
+
+                                <div class="form-group checkbox-group">
+                                    <label>
+                                        <input type="checkbox" id="crop_enabled">
+                                        <span>Enable Cropping</span>
+                                    </label>
+                                </div>
+
+                                <div id="crop-controls">
+                                    <div class="form-group">
+                                        <label for="crop_x">X Position (px)</label>
+                                        <input type="number" id="crop_x" min="0" value="0">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="crop_y">Y Position (px)</label>
+                                        <input type="number" id="crop_y" min="0" value="0">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="crop_width">Crop Width (px)</label>
+                                        <input type="number" id="crop_width" min="1" value="1920">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="crop_height">Crop Height (px)</label>
+                                        <input type="number" id="crop_height" min="1" value="1080">
+                                    </div>
+
+                                    <button type="button" class="btn btn-secondary btn-block" id="reset-crop-btn" style="margin-top: 15px;">
+                                        🔄 Reset Crop to Full Image
+                                    </button>
+
+                                    <p class="help-text">💡 Tip: Use the visual crop tool on the preview image</p>
+                                </div>
+                            </div>
+
+                            <!-- Overlays Tab -->
+                            <div class="tab-pane" id="tab-overlays">
+                                <h3>Overlays & Text</h3>
+
+                                <!-- DateTime Overlay -->
+                                <div class="overlay-section">
+                                    <h4>Date/Time Overlay</h4>
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox" id="datetime_enabled">
+                                            <span>Enable Date/Time</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="datetime_format">Format</label>
+                                        <input type="text" id="datetime_format" value="%Y-%m-%d %H:%M:%S">
+                                        <small class="help-text">Python strftime format</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="datetime_position">Position</label>
+                                        <select id="datetime_position">
+                                            <option value="top_left">Top Left</option>
+                                            <option value="top_right">Top Right</option>
+                                            <option value="bottom_left">Bottom Left</option>
+                                            <option value="bottom_right">Bottom Right</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="datetime_font_size">Font Size (pt)</label>
+                                        <input type="range" id="datetime_font_size" min="8" max="200" value="24">
+                                        <span class="value-display" id="datetime_font_size-value">24</span>
+                                    </div>
+                                </div>
+
+                                <!-- Text Overlay -->
+                                <div class="overlay-section">
+                                    <h4>Custom Text Overlay</h4>
+                                    <div class="form-group checkbox-group">
+                                        <label>
+                                            <input type="checkbox" id="text_enabled">
+                                            <span>Enable Custom Text</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="text_value">Text</label>
+                                        <input type="text" id="text_value" placeholder="Enter custom text">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="text_position">Position</label>
+                                        <select id="text_position">
+                                            <option value="top_left">Top Left</option>
+                                            <option value="top_right">Top Right</option>
+                                            <option value="bottom_left">Bottom Left</option>
+                                            <option value="bottom_right">Bottom Right</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="text_font_size">Font Size (pt)</label>
+                                        <input type="range" id="text_font_size" min="8" max="200" value="20">
+                                        <span class="value-display" id="text_font_size-value">20</span>
+                                    </div>
+                                </div>
+
+                                <!-- Styling -->
+                                <div class="overlay-section">
+                                    <h4>Overlay Styling</h4>
+                                    <div class="form-group">
+                                        <label for="overlay_color">Text Color</label>
+                                        <input type="color" id="overlay_color" value="#ffffff">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="overlay_background">Background Color</label>
+                                        <input type="text" id="overlay_background" value="#00000000" placeholder="#00000000 (RGBA)">
+                                        <small class="help-text">Use RGBA hex format for transparency</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- State Icons Tab -->
+                            <div class="tab-pane" id="tab-state-icons">
+                                <h3>State Icons</h3>
+                                <p class="help-text">Add dynamic icons that change based on entity states</p>
+
+                                <div id="state-icons-list">
+                                    <!-- Dynamic state icons will be rendered here -->
+                                </div>
+
+                                <button class="btn btn-secondary btn-block" id="add-state-icon">+ Add State Icon</button>
+                            </div>
+
+                            <!-- Stream Tab -->
+                            <div class="tab-pane" id="tab-stream">
+                                <h3>Stream Settings</h3>
+
+                                <div class="form-group">
+                                    <label for="rtsp_url">RTSP Stream URL (Optional)</label>
+                                    <input type="url" id="rtsp_url" placeholder="rtsp://...">
+                                    <small class="help-text">Optional RTSP stream URL for direct streaming</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Live Preview -->
+                    <div class="preview-panel">
+                        <h3>Live Preview</h3>
+                        <div class="preview-container">
+                            <div id="loading" class="loading">
+                                <div class="spinner"></div>
+                                <p>Loading preview...</p>
+                            </div>
+                            <div id="preview-image-wrapper" class="preview-image-wrapper">
+                                <img id="preview-image" alt="Preview">
+                                <div id="crop-overlay" class="crop-overlay" style="display: none;">
+                                    <div class="crop-box">
+                                        <div class="crop-handle nw"></div>
+                                        <div class="crop-handle ne"></div>
+                                        <div class="crop-handle sw"></div>
+                                        <div class="crop-handle se"></div>
+                                    </div>
+                                </div>
+                                <div id="crop-message" class="crop-message" style="display: none;">
+                                    To change cropping - use "Reset" button
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-info">
+                            <p id="preview-dimensions"></p>
+                            <p id="source-dimensions"></p>
+                            <p id="image-size"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Camera Modal -->
+    <div id="add-camera-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Camera</h3>
+                <button class="close-modal" id="close-add-camera">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-camera-select">Select Camera</label>
+                    <select id="new-camera-select" size="10" style="width: 100%; padding: 8px;">
+                        <option value="">Loading cameras...</option>
+                    </select>
+                    <small class="help-text">Choose a camera to add to snapshot processing</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-add-camera">Cancel</button>
+                <button class="btn btn-primary" id="confirm-add-camera">Add Camera</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- State Icon Configuration Modal -->
+    <div id="state-icon-modal" class="modal modal-large">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Configure State Icon</h3>
+                <button class="close-modal" id="close-state-icon">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Step 1: Entity Selection -->
+                <div class="config-section">
+                    <h4>1. Select Entity</h4>
+                    <div class="form-group">
+                        <label for="icon-entity-search">Entity</label>
+                        <input type="text" id="icon-entity-search" placeholder="Search for an entity..." autocomplete="off">
+                        <div id="entity-dropdown" class="entity-dropdown" style="display: none;">
+                            <div class="entity-dropdown-list" id="entity-dropdown-list">
+                                <!-- Entities will be populated here -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="icon-entity">
+                        <div id="selected-entity" class="selected-entity" style="display: none;">
+                            <span id="selected-entity-text"></span>
+                            <button type="button" class="btn-clear-entity" id="clear-entity">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Label Configuration -->
+                <div class="config-section">
+                    <h4>2. Label (Optional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="icon-label">Label Text</label>
+                            <input type="text" id="icon-label" placeholder="e.g., Living Room">
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="icon-show-label" checked>
+                                <span>Show Label</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: State Rules -->
+                <div class="config-section">
+                    <h4>3. State Rules</h4>
+                    <p class="help-text">Define how the icon appears for different entity states. Rules are evaluated in order.</p>
+                    <div class="hint-box" style="background: #f0f8ff; border-left: 3px solid #2196f3; padding: 10px; margin-bottom: 15px; font-size: 13px;">
+                        <strong>💡 Tip for list conditions:</strong><br>
+                        For <strong>In List</strong> and <strong>Not In List</strong> conditions, enter comma-separated values.<br>
+                        Example: <code>on,off,unavailable</code> or <code>home,away,work</code>
+                    </div>
+
+                    <div id="state-rules-list">
+                        <!-- State rules will be dynamically added here -->
+                    </div>
+
+                    <button type="button" class="btn btn-secondary btn-block" id="add-state-rule">
+                        ➕ Add State Rule
+                    </button>
+                </div>
+
+                <!-- Step 4: Position & Size -->
+                <div class="config-section">
+                    <h4>4. Position & Size</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="icon-position">Position</label>
+                            <select id="icon-position">
+                                <option value="top_left">Top Left</option>
+                                <option value="top_right">Top Right</option>
+                                <option value="bottom_left">Bottom Left</option>
+                                <option value="bottom_right">Bottom Right</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="icon-font-size">Font Size (pt)</label>
+                            <input type="range" id="icon-font-size" min="8" max="200" value="18">
+                            <span class="value-display" id="icon-font-size-value">18</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-state-icon">Cancel</button>
+                <button class="btn btn-primary" id="save-state-icon">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Icon Picker Modal -->
+    <div id="icon-picker-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Icon</h3>
+                <button class="close-modal" id="close-icon-picker">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="icon-picker-tabs">
+                    <button class="icon-picker-tab active" data-tab="mdi">Material Design Icons</button>
+                    <button class="icon-picker-tab" data-tab="custom">Custom Text</button>
+                </div>
+
+                <!-- MDI Tab -->
+                <div class="icon-picker-pane active" id="icon-picker-mdi">
+                    <div id="mdi-loading-banner" class="mdi-loading-banner" style="display: none;">
+                        <span class="spinner-small"></span>
+                        <span>Loading icons from CDN...</span>
+                    </div>
+                    <input type="text" id="mdi-search" placeholder="Search icons..." class="icon-search">
+                    <div class="mdi-categories">
+                        <button class="mdi-category active" data-category="suggested">⭐ Suggested</button>
+                        <button class="mdi-category" data-category="home">🏠 Home</button>
+                        <button class="mdi-category" data-category="light">💡 Lights</button>
+                        <button class="mdi-category" data-category="lock">🔒 Security</button>
+                        <button class="mdi-category" data-category="camera">📷 Cameras</button>
+                        <button class="mdi-category" data-category="door">🚪 Doors</button>
+                        <button class="mdi-category" data-category="weather">🌤️ Weather</button>
+                        <button class="mdi-category" data-category="device">📱 Devices</button>
+                        <button class="mdi-category" data-category="media">🎵 Media</button>
+                        <button class="mdi-category" data-category="arrow">➡️ Arrows</button>
+                        <button class="mdi-category" data-category="alert">⚠️ Alerts</button>
+                    </div>
+                    <div id="mdi-grid" class="mdi-grid">
+                        <!-- MDI icons will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Custom Text Tab -->
+                <div class="icon-picker-pane" id="icon-picker-custom">
+                    <div class="form-group">
+                        <label for="custom-icon-text">Custom Text/Symbol</label>
+                        <input type="text" id="custom-icon-text" placeholder="Enter any text or symbol" maxlength="10">
+                        <small class="help-text">Enter any text, Unicode symbol, or special character</small>
+                    </div>
+                    <button class="btn btn-primary" id="use-custom-icon">Use This Text</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Notification System -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="confirmation-modal">
+        <div class="confirmation-modal-content">
+            <div class="confirmation-modal-icon" id="confirmation-icon">
+                <span>⚠</span>
+            </div>
+            <h3 id="confirmation-title">Confirm Action</h3>
+            <p id="confirmation-message">Are you sure you want to proceed?</p>
+            <div class="confirmation-modal-actions">
+                <button class="btn btn-secondary" id="confirmation-cancel">Cancel</button>
+                <button class="btn btn-danger" id="confirmation-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="state-icon-manager.js?v=1.0.0"></script>
+    <script src="panel.js?v=1.0.0"></script>
+</body>
+</html>

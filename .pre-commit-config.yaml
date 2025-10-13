@@ -1,0 +1,96 @@
+# Pre-commit hooks for Camera Snapshot Processor
+# Install: pip install pre-commit && pre-commit install
+
+repos:
+  # Python code formatting
+  - repo: https://github.com/psf/black
+    rev: 24.3.0
+    hooks:
+      - id: black
+        language_version: python3.12
+        files: ^custom_components/.*\.py$
+
+  # Python import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+        files: ^custom_components/.*\.py$
+
+  # Python linting
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        args: ["--max-line-length=100", "--extend-ignore=E203,W503"]
+        files: ^custom_components/.*\.py$
+
+  # Remove trailing whitespace
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^(.*\.md|.*\.txt)$
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+        files: ^custom_components/.*\.json$
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+        exclude: ^custom_components/.*/fonts/.*\.ttf$
+
+  # Custom integration tests
+  - repo: local
+    hooks:
+      - id: integration-tests
+        name: Integration Structure Tests
+        entry: ./venv/bin/python test_integration.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: api-flow-tests
+        name: API Flow Tests
+        entry: ./venv/bin/python test_api_flow.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: frontend-validation
+        name: Frontend Validation
+        entry: ./venv/bin/python test_frontend.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: check-frontend-files
+        name: Check frontend files exist
+        entry: bash -c 'test -f custom_components/camera_snapshot_processor/frontend/panel.html && test -f custom_components/camera_snapshot_processor/frontend/panel.js && test -f custom_components/camera_snapshot_processor/frontend/styles.css'
+        language: system
+        pass_filenames: false
+        files: ^custom_components/camera_snapshot_processor/frontend/
+
+      - id: validate-manifest
+        name: Validate manifest.json
+        entry: python -m json.tool
+        language: system
+        files: ^custom_components/camera_snapshot_processor/manifest\.json$
+
+      - id: check-api-endpoints
+        name: Verify API endpoint consistency
+        entry: bash -c 'grep -q "camera_snapshot_processor" custom_components/camera_snapshot_processor/api.py && grep -q "/api/camera_snapshot_processor" custom_components/camera_snapshot_processor/frontend/panel.js'
+        language: system
+        pass_filenames: false
+        files: ^custom_components/camera_snapshot_processor/(api\.py|frontend/panel\.js)$
+
+      - id: validate-version-cache-busting
+        name: Validate resource version cache busting
+        entry: python validate_version.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
