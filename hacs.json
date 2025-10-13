@@ -1,0 +1,6 @@
+{
+  "name": "Camera Snapshot Processor",
+  "render_readme": true,
+  "domains": ["camera"],
+  "homeassistant": "2025.9.4"
+}

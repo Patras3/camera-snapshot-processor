@@ -1,0 +1,17 @@
+services:
+  homeassistant:
+    container_name: camera-snap-tune-test
+    image: homeassistant/home-assistant:latest
+    volumes:
+      # Map the test configuration directory
+      - ./test_config:/config
+      # Map our custom component directly into the container
+      - ./custom_components/camera_snapshot_processor:/config/custom_components/camera_snapshot_processor:ro
+    ports:
+      # Home Assistant Web UI
+      - "8123:8123"
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+      - TZ=Europe/Warsaw

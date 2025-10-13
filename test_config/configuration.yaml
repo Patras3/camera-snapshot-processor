@@ -1,0 +1,24 @@
+# Home Assistant Test Configuration for camera_snapshot_processor
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# Enable the logger
+logger:
+  default: info
+  logs:
+    custom_components.camera_snapshot_processor: debug
+
+# Example configuration for testing camera_snap_tune
+# You can add your test cameras here manually
+#
+# camera:
+#   - platform: generic
+#     name: Test Camera
+#     still_image_url: https://example.com/camera.jpg
+#     username: !secret camera_username
+#     password: !secret camera_password
