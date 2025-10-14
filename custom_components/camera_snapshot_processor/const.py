@@ -40,6 +40,9 @@ CONF_ICON_TEXT = "text"
 CONF_ICON_COLOR = "color"
 CONF_ICON_POSITION = "position"
 
+# Performance configuration
+CONF_RESIZE_ALGORITHM = "resize_algorithm"
+
 # Defaults
 DEFAULT_WIDTH = 1920
 DEFAULT_HEIGHT = 1080
@@ -53,6 +56,7 @@ DEFAULT_TEXT_FONT_SIZE = 20
 DEFAULT_STATE_ICON_FONT_SIZE = 18
 DEFAULT_OVERLAY_COLOR = [255, 255, 255]  # White - RGB list for ColorRGBSelector
 DEFAULT_OVERLAY_BACKGROUND = "#00000000"
+DEFAULT_RESIZE_ALGORITHM = "lanczos"  # lanczos (best quality) or bilinear (faster)
 
 # Preview
 PREVIEW_DIR = "www/camera_snapshot_processor"

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import time
 from typing import Any
 
 from homeassistant.components.camera import Camera, CameraEntityFeature
@@ -85,6 +87,13 @@ class SnapshotProcessorCamera(Camera):
         self._rtsp_url = rtsp_url.strip() if rtsp_url else None
         self._image_processor = ImageProcessor(hass, config)
 
+        # Performance optimization: request deduplication
+        self._render_lock = asyncio.Lock()
+        self._pending_render: asyncio.Future[bytes | None] | None = None
+        self._last_render_time = 0.0
+        self._render_count = 0
+        self._concurrent_requests = 0
+
         # Generate unique ID and name
         source_name = self._source_camera.replace("camera.", "")
         self._attr_unique_id = f"{DOMAIN}_{camera_id}"
@@ -155,7 +164,93 @@ class SnapshotProcessorCamera(Camera):
     async def async_camera_image(
         self, width: int | None = None, height: int | None = None
     ) -> bytes | None:
-        """Return processed camera image."""
+        """Return processed camera image with request deduplication."""
+        start_time = time.time()
+
+        # Check if a render is already in progress
+        if self._pending_render is not None and not self._pending_render.done():
+            # Another render is in progress - wait for it instead of starting a new one
+            self._concurrent_requests += 1
+            _LOGGER.debug(
+                "Camera %s: Render in progress, waiting (concurrent=%d)",
+                self._camera_id,
+                self._concurrent_requests,
+            )
+            try:
+                result = await self._pending_render
+                wait_time = (time.time() - start_time) * 1000
+                _LOGGER.debug(
+                    "Camera %s: Got deduplicated result in %.1fms",
+                    self._camera_id,
+                    wait_time,
+                )
+                return result
+            finally:
+                self._concurrent_requests -= 1
+
+        # No render in progress - we'll start one
+        async with self._render_lock:
+            # Double-check: another task might have started a render while we waited for the lock
+            if self._pending_render is not None and not self._pending_render.done():
+                self._concurrent_requests += 1
+                try:
+                    result = await self._pending_render
+                    wait_time = (time.time() - start_time) * 1000
+                    _LOGGER.debug(
+                        "Camera %s: Got deduplicated result in %.1fms (after lock)",
+                        self._camera_id,
+                        wait_time,
+                    )
+                    return result
+                finally:
+                    self._concurrent_requests -= 1
+
+            # Create a new future for this render
+            self._pending_render = asyncio.get_event_loop().create_future()
+
+            try:
+                # Perform the actual rendering
+                result = await self._render_image()
+
+                # Log performance metrics
+                render_time = (time.time() - start_time) * 1000
+                self._render_count += 1
+                self._last_render_time = time.time()
+
+                saved_requests = self._concurrent_requests
+                if saved_requests > 0:
+                    _LOGGER.debug(
+                        "Camera %s: Rendered in %.1fms (served %d concurrent requests)",
+                        self._camera_id,
+                        render_time,
+                        saved_requests + 1,
+                    )
+                else:
+                    _LOGGER.debug(
+                        "Camera %s: Rendered in %.1fms",
+                        self._camera_id,
+                        render_time,
+                    )
+
+                # Set the result for all waiting tasks
+                self._pending_render.set_result(result)
+                return result
+
+            except Exception as err:
+                _LOGGER.error(
+                    "Camera %s: Error rendering image: %s", self._camera_id, err
+                )
+                # Set exception for all waiting tasks
+                self._pending_render.set_exception(err)
+                return None
+            finally:
+                # Clear the pending render after a short delay to allow concurrent requests
+                # to pick up the result, but not cache it for too long
+                await asyncio.sleep(0.01)
+                self._pending_render = None
+
+    async def _render_image(self) -> bytes | None:
+        """Perform the actual image rendering (internal method)."""
         try:
             # Get the source camera entity
             source_camera_entity = self._get_source_camera_entity()
@@ -171,13 +266,13 @@ class SnapshotProcessorCamera(Camera):
                 )
                 return None
 
-            # Process the image
+            # Process the image (offloaded to thread pool in image_processor)
             processed_image = await self._image_processor.process_image(original_image)
             return processed_image
 
         except Exception as err:
-            _LOGGER.error("Error getting camera image: %s", err)
-            return None
+            _LOGGER.error("Error rendering image: %s", err)
+            raise
 
     async def stream_source(self) -> str | None:
         """Return the stream source."""

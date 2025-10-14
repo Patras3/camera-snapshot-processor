@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import io
 import logging
 from datetime import datetime
@@ -27,6 +28,7 @@ from .const import (
     CONF_OVERLAY_COLOR,
     CONF_OVERLAY_FONT_SIZE,
     CONF_QUALITY,
+    CONF_RESIZE_ALGORITHM,
     CONF_STATE_ICONS,
     CONF_TEXT_ENABLED,
     CONF_TEXT_FONT_SIZE,
@@ -37,6 +39,7 @@ from .const import (
     DEFAULT_OVERLAY_BACKGROUND,
     DEFAULT_OVERLAY_COLOR,
     DEFAULT_QUALITY,
+    DEFAULT_RESIZE_ALGORITHM,
     DEFAULT_STATE_ICON_FONT_SIZE,
     DEFAULT_TEXT_FONT_SIZE,
     POSITION_BOTTOM_LEFT,
@@ -61,35 +64,61 @@ class ImageProcessor:
         ] = {}
 
     async def process_image(self, image_bytes: bytes) -> bytes:
-        """Process the image according to configuration."""
+        """Process the image according to configuration.
+
+        Offloads CPU-intensive PIL operations to a thread pool for better performance.
+        """
         try:
-            # Load image
-            image = Image.open(io.BytesIO(image_bytes))
+            # Step 1: Offload decode/crop/resize to thread pool (CPU-intensive)
+            image = await asyncio.to_thread(
+                self._decode_and_transform_image, image_bytes
+            )
 
-            # Ensure RGB mode for processing
-            if image.mode != "RGB":
-                image = image.convert("RGB")
-
-            # Apply crop if enabled
-            if self.config.get(CONF_CROP_ENABLED, False):
-                image = self._crop_image(image)
-
-            # Resize image
-            image = self._resize_image(image)
-
-            # Apply overlays
+            # Step 2: Apply overlays (may include async state lookups)
             image = await self._apply_overlays(image)
 
-            # Convert to JPEG bytes
-            output = io.BytesIO()
-            quality = int(self.config.get(CONF_QUALITY, DEFAULT_QUALITY))
-            image.save(output, format="JPEG", quality=quality, optimize=True)
+            # Step 3: Offload JPEG encoding to thread pool (CPU-intensive)
+            processed_bytes = await asyncio.to_thread(self._encode_image, image)
 
-            return output.getvalue()
+            return processed_bytes
 
         except Exception as err:
             _LOGGER.error("Error processing image: %s", err)
             return image_bytes
+
+    def _decode_and_transform_image(self, image_bytes: bytes) -> Image.Image:
+        """Decode and transform image (runs in thread pool).
+
+        This method handles CPU-intensive PIL operations:
+        - Image decoding (JPEG → PIL Image)
+        - Color conversion
+        - Cropping
+        - Resizing
+
+        Returns PIL Image ready for overlay application.
+        """
+        # Load image
+        image = Image.open(io.BytesIO(image_bytes))
+
+        # Ensure RGB mode for processing
+        if image.mode != "RGB":
+            image = image.convert("RGB")
+
+        # Apply crop if enabled
+        if self.config.get(CONF_CROP_ENABLED, False):
+            image = self._crop_image(image)
+
+        # Resize image
+        image = self._resize_image(image)
+
+        return image
+
+    def _encode_image(self, image: Image.Image) -> bytes:
+        """Encode image to JPEG (runs in thread pool)."""
+        output = io.BytesIO()
+        quality = int(self.config.get(CONF_QUALITY, DEFAULT_QUALITY))
+        image.save(output, format="JPEG", quality=quality, optimize=True)
+        return output.getvalue()
 
     def _crop_image(self, image: Image.Image) -> Image.Image:
         """Crop the image based on configuration."""
@@ -147,7 +176,18 @@ class ImageProcessor:
             new_width = int(target_width or current_width)
             new_height = int(target_height or current_height)
 
-        return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        # Choose resize algorithm based on config
+        # LANCZOS: Best quality, slower (~50-100ms for 1920x1080)
+        # BILINEAR: Good quality, faster (~20-40ms for 1920x1080)
+        resize_algorithm = self.config.get(
+            CONF_RESIZE_ALGORITHM, DEFAULT_RESIZE_ALGORITHM
+        )
+        if resize_algorithm == "bilinear":
+            resampling = Image.Resampling.BILINEAR
+        else:
+            resampling = Image.Resampling.LANCZOS
+
+        return image.resize((new_width, new_height), resampling)
 
     async def _apply_overlays(self, image: Image.Image) -> Image.Image:
         """Apply text and icon overlays to the image."""
