@@ -351,21 +351,22 @@ class ImageProcessor:
         # Dynamic padding based on font size (minimum 8px, scales with text height)
         # This ensures text like 'p', 'g', 'y' with descenders are fully visible
         padding = max(8, int(text_height * 0.4))
+        margin = padding  # Margin between image edge and background
         spacing = offset * (text_height + padding * 2)
 
-        # Calculate position
+        # Calculate position - add margin so background doesn't start at corner
         if position == POSITION_TOP_LEFT:
-            x = padding
-            y = padding + spacing
+            x = margin + padding  # margin from edge + padding inside background
+            y = margin + padding + spacing
         elif position == POSITION_TOP_RIGHT:
-            x = image.width - text_width - padding
-            y = padding + spacing
+            x = image.width - text_width - margin - padding
+            y = margin + padding + spacing
         elif position == POSITION_BOTTOM_LEFT:
-            x = padding
-            y = image.height - text_height - padding * 2 - spacing
+            x = margin + padding
+            y = image.height - text_height - margin - padding * 2 - spacing
         else:  # POSITION_BOTTOM_RIGHT
-            x = image.width - text_width - padding
-            y = image.height - text_height - padding * 2 - spacing
+            x = image.width - text_width - margin - padding
+            y = image.height - text_height - margin - padding * 2 - spacing
 
         # Draw background rectangle (only if not fully transparent)
         if background_color[3] > 0:
@@ -683,21 +684,22 @@ class ImageProcessor:
         # Dynamic padding based on font size (minimum 8px, scales with text height)
         # This ensures text like 'p', 'g', 'y' with descenders are fully visible
         padding = max(8, int(max_height * 0.4))
+        margin = padding  # Margin between image edge and background
         spacing = offset * (max_height + padding * 2)
 
-        # Calculate starting position
+        # Calculate starting position - add margin so background doesn't start at corner
         if position == POSITION_TOP_LEFT:
-            x_start = padding
-            y = padding + spacing
+            x_start = margin + padding  # margin from edge + padding inside background
+            y = margin + padding + spacing
         elif position == POSITION_TOP_RIGHT:
-            x_start = image.width - total_width - padding
-            y = padding + spacing
+            x_start = image.width - total_width - margin - padding
+            y = margin + padding + spacing
         elif position == POSITION_BOTTOM_LEFT:
-            x_start = padding
-            y = image.height - max_height - padding * 2 - spacing
+            x_start = margin + padding
+            y = image.height - max_height - margin - padding * 2 - spacing
         else:  # POSITION_BOTTOM_RIGHT
-            x_start = image.width - total_width - padding
-            y = image.height - max_height - padding * 2 - spacing
+            x_start = image.width - total_width - margin - padding
+            y = image.height - max_height - margin - padding * 2 - spacing
 
         # Draw background rectangle (only if not fully transparent)
         if background_color[3] > 0:

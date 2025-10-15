@@ -442,6 +442,94 @@
 
         // Setup interactive crop
         setupCropInteraction();
+
+        // Setup enhanced color pickers
+        setupColorPickers();
+    }
+
+    // ==================== Enhanced Color Picker ====================
+
+    function setupColorPickers() {
+        // Initialize overlay_color picker
+        setupColorPicker('overlay_color', 'overlay_color_preview', false);
+
+        // Initialize overlay_background picker (with transparency support)
+        setupColorPicker('overlay_background', 'overlay_background_preview', true);
+    }
+
+    function setupColorPicker(inputId, previewId, supportsTransparency) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+
+        if (!input || !preview) return;
+
+        // Update preview when input changes
+        input.addEventListener('input', () => {
+            updateColorPreview(inputId, previewId, supportsTransparency);
+        });
+
+        // Setup swatch click handlers
+        const colorPicker = input.closest('.color-picker-enhanced');
+        if (colorPicker) {
+            const swatches = colorPicker.querySelectorAll('.color-swatch');
+            swatches.forEach(swatch => {
+                swatch.addEventListener('click', () => {
+                    const color = swatch.getAttribute('data-color');
+                    input.value = color;
+                    updateColorPreview(inputId, previewId, supportsTransparency);
+                    schedulePreviewUpdate();
+                });
+            });
+        }
+
+        // Preview click opens color picker
+        preview.addEventListener('click', () => {
+            input.click();
+        });
+
+        // Initial preview update
+        updateColorPreview(inputId, previewId, supportsTransparency);
+    }
+
+    function updateColorPreview(inputId, previewId, supportsTransparency) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+
+        if (!input || !preview) return;
+
+        const color = input.value;
+
+        if (supportsTransparency) {
+            // For background color (RGBA hex format)
+            const colorDiv = document.createElement('div');
+            colorDiv.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: ${color};
+                border-radius: 6px;
+            `;
+            preview.innerHTML = '';
+            preview.appendChild(colorDiv);
+        } else {
+            // For simple color picker
+            preview.style.backgroundColor = color;
+        }
+
+        // Update active swatch indicator
+        const colorPicker = input.closest('.color-picker-enhanced');
+        if (colorPicker) {
+            const swatches = colorPicker.querySelectorAll('.color-swatch');
+            swatches.forEach(swatch => {
+                if (swatch.getAttribute('data-color').toLowerCase() === color.toLowerCase()) {
+                    swatch.classList.add('active');
+                } else {
+                    swatch.classList.remove('active');
+                }
+            });
+        }
     }
 
     // ==================== Camera Management ====================
@@ -734,6 +822,10 @@
             setInputValue('overlay_color', hexColor);
         }
         setInputValue('overlay_background', config.overlay_background || '#00000000');
+
+        // Update color previews
+        updateColorPreview('overlay_color', 'overlay_color_preview', false);
+        updateColorPreview('overlay_background', 'overlay_background_preview', true);
 
         // Stream
         setInputValue('rtsp_url', config.rtsp_url || '');
