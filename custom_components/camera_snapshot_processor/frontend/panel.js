@@ -607,13 +607,11 @@
     }
 
     async function reloadData() {
-        const reloadBtn = document.getElementById('reload-data-btn');
-        const originalBtnText = reloadBtn.textContent;
+        const loadingOverlay = document.getElementById('loading-overlay');
 
         try {
-            // Disable button and show loading state
-            reloadBtn.disabled = true;
-            reloadBtn.textContent = '🔄 Reloading...';
+            // Show loading overlay
+            loadingOverlay.style.display = 'flex';
 
             // Remember current camera ID to re-select it
             const currentId = currentCameraId;
@@ -634,9 +632,8 @@
             console.error('Failed to reload data:', error);
             showError('Failed to reload data: ' + error.message);
         } finally {
-            // Reset button state
-            reloadBtn.disabled = false;
-            reloadBtn.textContent = originalBtnText;
+            // Hide loading overlay
+            loadingOverlay.style.display = 'none';
         }
     }
 
