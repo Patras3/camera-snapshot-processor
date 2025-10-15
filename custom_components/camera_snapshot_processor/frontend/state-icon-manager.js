@@ -607,12 +607,14 @@
 
                     <div>
                         <label>Icon Color:</label>
-                        <input type="color" class="rule-icon-color" value="${this.rgbToHex(rule.icon_color)}">
+                        <div class="pickr-container rule-icon-color-picker"></div>
+                        <input type="hidden" class="rule-icon-color" value="${this.rgbToHex(rule.icon_color)}">
                     </div>
 
                     <div>
                         <label>Text Color:</label>
-                        <input type="color" class="rule-text-color" value="${this.rgbToHex(rule.text_color)}">
+                        <div class="pickr-container rule-text-color-picker"></div>
+                        <input type="hidden" class="rule-text-color" value="${this.rgbToHex(rule.text_color)}">
                     </div>
 
                     <div>
@@ -680,6 +682,66 @@
             // Cancel button
             body.querySelector('[data-action="cancel-rule"]').addEventListener('click', () => {
                 this.renderStateRules();
+            });
+
+            // Initialize Pickr for icon color
+            const iconColorInput = body.querySelector('.rule-icon-color');
+            const iconColorPickr = Pickr.create({
+                el: body.querySelector('.rule-icon-color-picker'),
+                theme: 'nano',
+                default: this.rgbToHex(rule.icon_color),
+                swatches: [
+                    '#ffffff', '#000000', '#ffd700', '#ff0000',
+                    '#00ff00', '#0000ff', '#ffff00', '#ff9800'
+                ],
+                components: {
+                    preview: true,
+                    opacity: false,
+                    hue: true,
+                    interaction: {
+                        hex: true,
+                        rgba: false,
+                        input: true,
+                        save: true
+                    }
+                }
+            });
+
+            iconColorPickr.on('save', (color) => {
+                if (color) {
+                    iconColorInput.value = color.toHEXA().toString();
+                    iconColorPickr.hide();
+                }
+            });
+
+            // Initialize Pickr for text color
+            const textColorInput = body.querySelector('.rule-text-color');
+            const textColorPickr = Pickr.create({
+                el: body.querySelector('.rule-text-color-picker'),
+                theme: 'nano',
+                default: this.rgbToHex(rule.text_color),
+                swatches: [
+                    '#ffffff', '#000000', '#cccccc', '#ffd700',
+                    '#ff0000', '#00ff00', '#0000ff', '#ff9800'
+                ],
+                components: {
+                    preview: true,
+                    opacity: false,
+                    hue: true,
+                    interaction: {
+                        hex: true,
+                        rgba: false,
+                        input: true,
+                        save: true
+                    }
+                }
+            });
+
+            textColorPickr.on('save', (color) => {
+                if (color) {
+                    textColorInput.value = color.toHEXA().toString();
+                    textColorPickr.hide();
+                }
             });
         }
 

@@ -443,101 +443,76 @@
         // Setup interactive crop
         setupCropInteraction();
 
-        // Setup color picker popup
-        setupColorPickerPopup();
+        // Setup Pickr color pickers
+        setupColorPickers();
     }
 
-    // ==================== Color Picker Popup ====================
+    // ==================== Pickr Color Pickers ====================
 
-    let colorPickerCallback = null;
-    let colorPickerTargetInput = null;
+    let overlayColorPickr = null;
+    let overlayBackgroundPickr = null;
 
-    function setupColorPickerPopup() {
-        const popup = document.getElementById('color-picker-popup');
-        const customBtn = document.getElementById('color-picker-custom');
-
-        // Setup color inputs to show popup on click
-        document.querySelectorAll('input[type="color"]').forEach(input => {
-            input.addEventListener('click', (e) => {
-                e.preventDefault();
-                showColorPickerPopup(input, false);
-            });
-        });
-
-        // Custom color button opens native picker
-        customBtn.addEventListener('click', () => {
-            if (colorPickerTargetInput) {
-                closeColorPickerPopup();
-                // Open native color picker
-                colorPickerTargetInput.click();
+    function setupColorPickers() {
+        // Text Color Picker (RGB only)
+        overlayColorPickr = Pickr.create({
+            el: '#overlay_color_picker',
+            theme: 'nano',
+            default: '#ffffff',
+            swatches: [
+                '#ffffff', '#000000', '#ff0000', '#00ff00',
+                '#0000ff', '#ffff00', '#ffd700', '#ff9800'
+            ],
+            components: {
+                preview: true,
+                opacity: false,
+                hue: true,
+                interaction: {
+                    hex: true,
+                    rgba: false,
+                    input: true,
+                    save: true
+                }
             }
         });
 
-        // Close on backdrop click
-        popup.addEventListener('click', (e) => {
-            if (e.target === popup) {
-                closeColorPickerPopup();
-            }
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && popup.style.display !== 'none') {
-                closeColorPickerPopup();
-            }
-        });
-    }
-
-    function showColorPickerPopup(inputElement, isTransparent = false) {
-        colorPickerTargetInput = inputElement;
-        const popup = document.getElementById('color-picker-popup');
-        const swatchesGrid = document.getElementById('color-swatches-grid');
-
-        // Define default colors
-        const defaultColors = isTransparent ? [
-            { color: '#00000000', label: 'Transparent' },
-            { color: '#000000cc', label: 'Black 80%' },
-            { color: '#00000099', label: 'Black 60%' },
-            { color: '#ffffff99', label: 'White 60%' },
-            { color: '#ffffffcc', label: 'White 80%' },
-            { color: '#667eeacc', label: 'Purple 80%' },
-            { color: '#4caf50cc', label: 'Green 80%' },
-            { color: '#f44336cc', label: 'Red 80%' },
-        ] : [
-            { color: '#ffffff', label: 'White' },
-            { color: '#000000', label: 'Black' },
-            { color: '#ff0000', label: 'Red' },
-            { color: '#00ff00', label: 'Green' },
-            { color: '#0000ff', label: 'Blue' },
-            { color: '#ffff00', label: 'Yellow' },
-            { color: '#ffd700', label: 'Gold' },
-            { color: '#ff9800', label: 'Orange' },
-        ];
-
-        // Render swatches
-        swatchesGrid.innerHTML = '';
-        defaultColors.forEach(({ color, label }) => {
-            const swatch = document.createElement('button');
-            swatch.type = 'button';
-            swatch.className = 'color-swatch';
-            swatch.style.background = color;
-            swatch.title = label;
-            swatch.addEventListener('click', () => {
-                inputElement.value = color;
-                closeColorPickerPopup();
+        overlayColorPickr.on('save', (color) => {
+            if (color) {
+                document.getElementById('overlay_color').value = color.toHEXA().toString();
+                overlayColorPickr.hide();
                 schedulePreviewUpdate();
-            });
-            swatchesGrid.appendChild(swatch);
+            }
         });
 
-        // Show popup
-        popup.style.display = 'flex';
-    }
+        // Background Color Picker (RGBA with transparency)
+        overlayBackgroundPickr = Pickr.create({
+            el: '#overlay_background_picker',
+            theme: 'nano',
+            default: '#00000000',
+            swatches: [
+                'rgba(0,0,0,0)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.6)',
+                'rgba(255,255,255,0.6)', 'rgba(255,255,255,0.8)',
+                'rgba(102,126,234,0.8)', 'rgba(76,175,80,0.8)', 'rgba(244,67,54,0.8)'
+            ],
+            components: {
+                preview: true,
+                opacity: true,
+                hue: true,
+                interaction: {
+                    hex: true,
+                    rgba: true,
+                    input: true,
+                    save: true
+                }
+            }
+        });
 
-    function closeColorPickerPopup() {
-        const popup = document.getElementById('color-picker-popup');
-        popup.style.display = 'none';
-        colorPickerTargetInput = null;
+        overlayBackgroundPickr.on('save', (color) => {
+            if (color) {
+                document.getElementById('overlay_background').value = color.toHEXA().toString();
+                overlayBackgroundPickr.hide();
+                schedulePreviewUpdate();
+            }
+        });
     }
 
     // ==================== Camera Management ====================
@@ -828,8 +803,15 @@
         if (config.overlay_color) {
             const hexColor = rgbToHex(config.overlay_color);
             setInputValue('overlay_color', hexColor);
+            if (overlayColorPickr) {
+                overlayColorPickr.setColor(hexColor);
+            }
         }
-        setInputValue('overlay_background', config.overlay_background || '#00000000');
+        const bgColor = config.overlay_background || '#00000000';
+        setInputValue('overlay_background', bgColor);
+        if (overlayBackgroundPickr) {
+            overlayBackgroundPickr.setColor(bgColor);
+        }
 
         // Stream
         setInputValue('rtsp_url', config.rtsp_url || '');

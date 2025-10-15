@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Camera Snapshot Processor</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/themes/nano.min.css">
     <link rel="stylesheet" href="styles.css?v=1.1.0">
 </head>
 <body>
@@ -232,17 +233,15 @@
                                     <h4>Overlay Styling</h4>
                                     <div class="form-group">
                                         <label for="overlay_color">Text Color</label>
-                                        <div class="color-input-wrapper">
-                                            <input type="color" id="overlay_color" value="#ffffff">
-                                        </div>
+                                        <div class="pickr-container" id="overlay_color_picker"></div>
+                                        <input type="hidden" id="overlay_color" value="#ffffff">
                                     </div>
 
                                     <div class="form-group">
                                         <label for="overlay_background">Background Color</label>
-                                        <div class="color-input-wrapper">
-                                            <input type="text" id="overlay_background" value="#00000000" placeholder="#00000000 (RGBA)">
-                                        </div>
-                                        <small class="help-text">Use RGBA hex format for transparency</small>
+                                        <div class="pickr-container" id="overlay_background_picker"></div>
+                                        <input type="hidden" id="overlay_background" value="#00000000">
+                                        <small class="help-text">Supports transparency (RGBA)</small>
                                     </div>
                                 </div>
                             </div>
@@ -475,19 +474,6 @@
     <!-- Custom Notification System -->
     <div id="notification-container" class="notification-container"></div>
 
-    <!-- Color Picker Popup -->
-    <div id="color-picker-popup" class="color-picker-popup" style="display: none;">
-        <div class="color-picker-popup-content">
-            <h4>Quick Colors</h4>
-            <div class="color-swatches-grid" id="color-swatches-grid">
-                <!-- Swatches will be dynamically added here -->
-            </div>
-            <div class="color-picker-actions">
-                <button type="button" class="btn btn-secondary btn-sm" id="color-picker-custom">Custom Color...</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="confirmation-modal">
         <div class="confirmation-modal-content">
@@ -503,6 +489,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/pickr.min.js"></script>
     <script src="state-icon-manager.js?v=1.1.0"></script>
     <script src="panel.js?v=1.1.0"></script>
 </body>
