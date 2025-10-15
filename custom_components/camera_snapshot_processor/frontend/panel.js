@@ -810,11 +810,20 @@
             document.getElementById('camera-title').textContent = sourceName;
             document.getElementById('camera-source').textContent = `Source: ${config.source_camera}`;
 
-            // Update entity name button
-            const entityName = config.entity_name || `${config.source_camera.replace('camera.', '')}_processed`;
+            // Update entity name button - use actual entity ID from HA if available
+            let displayEntityId;
+            if (config.actual_entity_id) {
+                // Use the actual entity ID from Home Assistant registry
+                displayEntityId = config.actual_entity_id;
+            } else {
+                // Fallback: construct from entity_name config
+                const entityName = config.entity_name || `${config.source_camera.replace('camera.', '')}_processed`;
+                displayEntityId = `camera.${entityName}`;
+            }
+
             const entityNameBtn = document.getElementById('entity-name-btn');
             const entityNameSection = document.getElementById('entity-name-section');
-            entityNameBtn.textContent = `camera.${entityName}`;
+            entityNameBtn.textContent = displayEntityId;
             entityNameSection.style.display = 'block';
         } else {
             document.getElementById('entity-name-section').style.display = 'none';
@@ -829,7 +838,15 @@
         }
 
         const config = cameras[currentCameraId];
-        const currentEntityName = config.entity_name || `${config.source_camera.replace('camera.', '')}_processed`;
+
+        // Use actual entity name from HA registry if available
+        let currentEntityName;
+        if (config.actual_entity_name) {
+            currentEntityName = config.actual_entity_name;
+        } else {
+            // Fallback to config
+            currentEntityName = config.entity_name || `${config.source_camera.replace('camera.', '')}_processed`;
+        }
 
         const input = document.getElementById('entity-name-input');
         input.value = currentEntityName;

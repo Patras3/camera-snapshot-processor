@@ -50,7 +50,31 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
                 )
 
             cameras = entry.data.get("cameras", {})
-            return web.json_response({"success": True, "cameras": cameras})
+
+            # Enrich camera configs with actual entity IDs from HA registry
+            from homeassistant.helpers import entity_registry as er
+
+            entity_registry = er.async_get(self.hass)
+
+            enriched_cameras = {}
+            for camera_id, config in cameras.items():
+                enriched_config = dict(config)
+
+                # Get actual entity ID from HA registry
+                unique_id = f"{DOMAIN}_{camera_id}"
+                entity_id = entity_registry.async_get_entity_id(
+                    "camera", DOMAIN, unique_id
+                )
+
+                if entity_id:
+                    # Extract the object_id (part after camera.)
+                    actual_entity_name = entity_id.replace("camera.", "")
+                    enriched_config["actual_entity_id"] = entity_id
+                    enriched_config["actual_entity_name"] = actual_entity_name
+
+                enriched_cameras[camera_id] = enriched_config
+
+            return web.json_response({"success": True, "cameras": enriched_cameras})
 
         except Exception as err:
             _LOGGER.error("Error getting cameras: %s", err, exc_info=True)
