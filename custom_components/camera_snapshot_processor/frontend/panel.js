@@ -794,6 +794,7 @@
 
     function populateForm(config) {
         // Dimensions
+        setInputValue('entity_name_suffix', config.entity_name_suffix || 'processed');
         setInputValue('width', config.width || 1920);
         setInputValue('height', config.height || 1080);
         setInputValue('keep_ratio', config.keep_ratio !== false);
@@ -890,6 +891,7 @@
 
         return {
             source_camera: currentConfig.source_camera,
+            entity_name_suffix: document.getElementById('entity_name_suffix').value || 'processed',
             width: parseInt(document.getElementById('width').value),
             height: parseInt(document.getElementById('height').value),
             keep_ratio: document.getElementById('keep_ratio').checked,

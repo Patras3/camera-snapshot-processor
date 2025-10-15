@@ -6,6 +6,7 @@ DOMAIN = "camera_snapshot_processor"
 CONF_SOURCE_CAMERA = "source_camera"
 CONF_SOURCE_WIDTH = "source_width"
 CONF_SOURCE_HEIGHT = "source_height"
+CONF_ENTITY_NAME_SUFFIX = "entity_name_suffix"
 CONF_WIDTH = "width"
 CONF_HEIGHT = "height"
 CONF_KEEP_RATIO = "keep_ratio"
@@ -45,6 +46,7 @@ CONF_ICON_POSITION = "position"
 CONF_RESIZE_ALGORITHM = "resize_algorithm"
 
 # Defaults
+DEFAULT_ENTITY_NAME_SUFFIX = "processed"
 DEFAULT_WIDTH = 1920
 DEFAULT_HEIGHT = 1080
 DEFAULT_KEEP_RATIO = True

@@ -12,7 +12,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONF_RTSP_URL, CONF_SOURCE_CAMERA, DOMAIN
+from .const import (
+    CONF_ENTITY_NAME_SUFFIX,
+    CONF_RTSP_URL,
+    CONF_SOURCE_CAMERA,
+    DEFAULT_ENTITY_NAME_SUFFIX,
+    DOMAIN,
+)
 from .image_processor import ImageProcessor
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,8 +70,7 @@ async def async_setup_entry(
 class SnapshotProcessorCamera(Camera):
     """Representation of a Camera Snapshot Processor camera."""
 
-    _attr_has_entity_name = True
-    _attr_name = None
+    _attr_has_entity_name = False  # We manage the full entity name ourselves
 
     def __init__(
         self,
@@ -94,12 +99,17 @@ class SnapshotProcessorCamera(Camera):
         self._render_count = 0
         self._concurrent_requests = 0
 
-        # Generate unique ID and name
+        # Generate unique ID and name with configurable suffix
         source_name = self._source_camera.replace("camera.", "")
+        name_suffix = config.get(CONF_ENTITY_NAME_SUFFIX, DEFAULT_ENTITY_NAME_SUFFIX)
+
+        # Build the entity name: source_name + _ + suffix
         self._attr_unique_id = f"{DOMAIN}_{camera_id}"
+        self._attr_name = f"{source_name}_{name_suffix}"
+
         self._attr_device_info = {
             "identifiers": {(DOMAIN, self._attr_unique_id)},
-            "name": f"{source_name.replace('_', ' ').title()} Processed",
+            "name": f"{source_name.replace('_', ' ').title()} {name_suffix.title()}",
             "manufacturer": "Camera Snapshot Processor",
             "model": "Processed Camera",
         }
@@ -118,6 +128,22 @@ class SnapshotProcessorCamera(Camera):
             rtsp_url = self._config.get(CONF_RTSP_URL, "")
             self._rtsp_url = rtsp_url.strip() if rtsp_url else None
             self._image_processor = ImageProcessor(self.hass, self._config)
+
+            # Update entity name if suffix changed
+            source_name = self._source_camera.replace("camera.", "")
+            name_suffix = self._config.get(
+                CONF_ENTITY_NAME_SUFFIX, DEFAULT_ENTITY_NAME_SUFFIX
+            )
+            new_name = f"{source_name}_{name_suffix}"
+
+            if self._attr_name != new_name:
+                self._attr_name = new_name
+                _LOGGER.info(
+                    "Camera %s: Entity name updated to %s",
+                    self._camera_id,
+                    new_name,
+                )
+
             self.async_write_ha_state()
 
     async def async_added_to_hass(self) -> None:
