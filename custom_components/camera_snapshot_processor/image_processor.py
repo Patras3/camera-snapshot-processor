@@ -343,40 +343,62 @@ class ImageProcessor:
         text_color = self._hex_to_rgba(color)
         background_color = self._hex_to_rgba(bg_color)
 
-        # Get text bounding box
+        # Get text bounding box - bbox gives us the actual visual bounds of the text
+        # bbox[0], bbox[1] = left, top offset from anchor point (can be negative)
+        # bbox[2], bbox[3] = right, bottom offset from anchor point
         bbox = draw.textbbox((0, 0), text, font=font)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
 
+        # Store the offsets for proper background alignment
+        bbox_top_offset = bbox[1]  # Top of text relative to baseline (often negative)
+        bbox_bottom_offset = bbox[3]  # Bottom of text relative to baseline (positive)
+
         # Dynamic padding based on font size (minimum 8px, scales with text height)
-        # This ensures text like 'p', 'g', 'y' with descenders are fully visible
         padding = max(8, int(text_height * 0.4))
         margin = padding  # Margin between image edge and background
         spacing = offset * (text_height + padding * 2)
 
-        # Calculate position - add margin so background doesn't start at corner
+        # Calculate text anchor position (where PIL will place the text)
+        # We need to account for bbox offsets to align the background properly
         if position == POSITION_TOP_LEFT:
-            x = margin + padding  # margin from edge + padding inside background
-            y = margin + padding + spacing
+            x = margin + padding - bbox[0]  # Adjust for left offset
+            y = margin + padding - bbox_top_offset + spacing  # Adjust for top offset
         elif position == POSITION_TOP_RIGHT:
-            x = image.width - text_width - margin - padding
-            y = margin + padding + spacing
+            x = image.width - text_width - margin - padding - bbox[0]
+            y = margin + padding - bbox_top_offset + spacing
         elif position == POSITION_BOTTOM_LEFT:
-            x = margin + padding
-            y = image.height - text_height - margin - padding * 2 - spacing
+            x = margin + padding - bbox[0]
+            y = (
+                image.height
+                - text_height
+                - margin
+                - padding
+                - bbox_top_offset
+                - spacing
+            )
         else:  # POSITION_BOTTOM_RIGHT
-            x = image.width - text_width - margin - padding
-            y = image.height - text_height - margin - padding * 2 - spacing
+            x = image.width - text_width - margin - padding - bbox[0]
+            y = (
+                image.height
+                - text_height
+                - margin
+                - padding
+                - bbox_top_offset
+                - spacing
+            )
+
+        # Calculate background rectangle using the actual bbox offsets
+        # This ensures the background aligns perfectly with the visual text bounds
+        bg_left = x + bbox[0] - padding
+        bg_top = y + bbox_top_offset - padding
+        bg_right = x + bbox[2] + padding
+        bg_bottom = y + bbox_bottom_offset + padding
 
         # Draw background rectangle (only if not fully transparent)
         if background_color[3] > 0:
             draw.rectangle(
-                [
-                    x - padding,
-                    y - padding,
-                    x + text_width + padding,
-                    y + text_height + padding,
-                ],
+                [bg_left, bg_top, bg_right, bg_bottom],
                 fill=background_color,
             )
 
@@ -655,9 +677,13 @@ class ImageProcessor:
         background_color = self._hex_to_rgba(bg_color)
 
         # Calculate total dimensions - each part uses its own font
+        # We need to track bbox offsets to align the background properly
         total_width = 0
         max_height = 0
+        max_top_offset = 0  # Most negative (highest above baseline)
+        max_bottom_offset = 0  # Most positive (lowest below baseline)
         part_widths = []
+        part_bboxes = []
 
         for part in parts:
             part_font = part.get("font")
@@ -671,8 +697,14 @@ class ImageProcessor:
             width = bbox[2] - bbox[0]
             height = bbox[3] - bbox[1]
             part_widths.append(width)
+            part_bboxes.append(bbox)
             total_width += width
             max_height = max(max_height, height)
+            # Track the extremes for proper background alignment
+            max_top_offset = min(max_top_offset, bbox[1])  # Most negative = highest
+            max_bottom_offset = max(
+                max_bottom_offset, bbox[3]
+            )  # Most positive = lowest
 
         # Remove trailing space width from last part
         if part_widths and parts:
@@ -681,35 +713,69 @@ class ImageProcessor:
                 last_space_bbox = draw.textbbox((0, 0), " ", font=last_font)
                 total_width -= last_space_bbox[2] - last_space_bbox[0]
 
-        # Dynamic padding based on font size (minimum 8px, scales with text height)
-        # This ensures text like 'p', 'g', 'y' with descenders are fully visible
-        padding = max(8, int(max_height * 0.4))
-        margin = padding  # Margin between image edge and background
-        spacing = offset * (max_height + padding * 2)
+        # Calculate actual visual height using the bbox offsets
+        visual_height = max_bottom_offset - max_top_offset
 
-        # Calculate starting position - add margin so background doesn't start at corner
+        # Dynamic padding based on font size (minimum 8px, scales with visual height)
+        padding = max(8, int(visual_height * 0.4))
+        margin = padding  # Margin between image edge and background
+        spacing = offset * (visual_height + padding * 2)
+
+        # Calculate text anchor position (where PIL will place the text)
+        # We need to account for bbox offsets to align the background properly
         if position == POSITION_TOP_LEFT:
-            x_start = margin + padding  # margin from edge + padding inside background
-            y = margin + padding + spacing
+            x_start = (
+                margin + padding - part_bboxes[0][0]
+                if part_bboxes
+                else margin + padding
+            )
+            y = margin + padding - max_top_offset + spacing
         elif position == POSITION_TOP_RIGHT:
-            x_start = image.width - total_width - margin - padding
-            y = margin + padding + spacing
+            x_start = (
+                image.width
+                - total_width
+                - margin
+                - padding
+                - (part_bboxes[0][0] if part_bboxes else 0)
+            )
+            y = margin + padding - max_top_offset + spacing
         elif position == POSITION_BOTTOM_LEFT:
-            x_start = margin + padding
-            y = image.height - max_height - margin - padding * 2 - spacing
+            x_start = margin + padding - (part_bboxes[0][0] if part_bboxes else 0)
+            y = (
+                image.height
+                - visual_height
+                - margin
+                - padding
+                - max_top_offset
+                - spacing
+            )
         else:  # POSITION_BOTTOM_RIGHT
-            x_start = image.width - total_width - margin - padding
-            y = image.height - max_height - margin - padding * 2 - spacing
+            x_start = (
+                image.width
+                - total_width
+                - margin
+                - padding
+                - (part_bboxes[0][0] if part_bboxes else 0)
+            )
+            y = (
+                image.height
+                - visual_height
+                - margin
+                - padding
+                - max_top_offset
+                - spacing
+            )
+
+        # Calculate background rectangle using the actual bbox offsets
+        bg_left = x_start + (part_bboxes[0][0] if part_bboxes else 0) - padding
+        bg_top = y + max_top_offset - padding
+        bg_right = bg_left + total_width + padding * 2
+        bg_bottom = y + max_bottom_offset + padding
 
         # Draw background rectangle (only if not fully transparent)
         if background_color[3] > 0:
             draw.rectangle(
-                [
-                    x_start - padding,
-                    y - padding,
-                    x_start + total_width + padding,
-                    y + max_height + padding,
-                ],
+                [bg_left, bg_top, bg_right, bg_bottom],
                 fill=background_color,
             )
 
