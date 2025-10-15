@@ -71,6 +71,14 @@
                             <div class="tab-pane active" id="tab-dimensions">
                                 <h3>Image Dimensions & Quality</h3>
 
+                                <!-- Info tip at top -->
+                                <div class="info-tip">
+                                    <span class="info-icon">ℹ️</span>
+                                    <span class="info-text">
+                                        For custom values or upscaling, type directly in the input fields.
+                                    </span>
+                                </div>
+
                                 <div class="form-group checkbox-group">
                                     <label>
                                         <input type="checkbox" id="keep_ratio" checked>
@@ -79,16 +87,28 @@
                                     <small class="help-text">When enabled, width is automatically calculated based on height to maintain aspect ratio</small>
                                 </div>
 
-                                <div class="form-group" id="width-control">
-                                    <label for="width">Width (px)</label>
-                                    <input type="range" id="width-slider" min="1" max="7680" value="1920">
-                                    <input type="number" id="width" min="1" max="7680" value="1920" style="width: 100px; margin-left: 10px;">
-                                </div>
-
                                 <div class="form-group">
                                     <label for="height">Height (px)</label>
-                                    <input type="range" id="height-slider" min="1" max="4320" value="1080">
-                                    <input type="number" id="height" min="1" max="4320" value="1080" style="width: 100px; margin-left: 10px;">
+                                    <div class="slider-with-input">
+                                        <div class="slider-container">
+                                            <span class="slider-label height-slider-min">100</span>
+                                            <input type="range" id="height-slider" min="100" max="1080" value="1080" step="10">
+                                            <span class="slider-label height-slider-max">1080</span>
+                                        </div>
+                                        <input type="number" id="height" min="1" max="999999" value="1080">
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="width-control">
+                                    <label for="width">Width (px)</label>
+                                    <div class="slider-with-input">
+                                        <div class="slider-container">
+                                            <span class="slider-label width-slider-min">100</span>
+                                            <input type="range" id="width-slider" min="100" max="1920" value="1920" step="10">
+                                            <span class="slider-label width-slider-max">1920</span>
+                                        </div>
+                                        <input type="number" id="width" min="1" max="999999" value="1920">
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -131,7 +151,7 @@
                                     </div>
 
                                     <button type="button" class="btn btn-secondary btn-block" id="reset-crop-btn" style="margin-top: 15px;">
-                                        🔄 Reset Crop to Full Image
+                                        🔄 Reset
                                     </button>
 
                                     <p class="help-text">💡 Tip: Use the visual crop tool on the preview image</p>
@@ -267,7 +287,7 @@
                                     </div>
                                 </div>
                                 <div id="crop-message" class="crop-message" style="display: none;">
-                                    To change cropping - use "Reset" button
+                                    To change cropping - use 🔄 Reset button
                                 </div>
                             </div>
                         </div>

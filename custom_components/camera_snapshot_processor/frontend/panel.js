@@ -360,12 +360,26 @@
         document.getElementById('reset-crop-btn').addEventListener('click', resetCrop);
 
         // Sync dimension sliders with number inputs
+        // Slider -> Input: Direct sync (slider always in valid range)
         document.getElementById('width-slider').addEventListener('input', (e) => {
             document.getElementById('width').value = e.target.value;
             schedulePreviewUpdate();
         });
+
+        // Input -> Slider: Clamp slider to its range when input goes outside
         document.getElementById('width').addEventListener('input', (e) => {
-            document.getElementById('width-slider').value = e.target.value;
+            const slider = document.getElementById('width-slider');
+            const value = parseInt(e.target.value) || 0;
+
+            // Clamp slider to its range (input can be anything)
+            if (value < parseInt(slider.min)) {
+                slider.value = slider.min;
+            } else if (value > parseInt(slider.max)) {
+                slider.value = slider.max;
+            } else {
+                slider.value = value;
+            }
+
             if (sourceImageDimensions.width && !document.getElementById('crop_enabled').checked) {
                 updateCropDimensionsFromSource();
             }
@@ -377,8 +391,20 @@
             document.getElementById('height').value = e.target.value;
             schedulePreviewUpdate();
         });
+
         document.getElementById('height').addEventListener('input', (e) => {
-            document.getElementById('height-slider').value = e.target.value;
+            const slider = document.getElementById('height-slider');
+            const value = parseInt(e.target.value) || 0;
+
+            // Clamp slider to its range (input can be anything)
+            if (value < parseInt(slider.min)) {
+                slider.value = slider.min;
+            } else if (value > parseInt(slider.max)) {
+                slider.value = slider.max;
+            } else {
+                slider.value = value;
+            }
+
             if (sourceImageDimensions.height && !document.getElementById('crop_enabled').checked) {
                 updateCropDimensionsFromSource();
             }
@@ -801,7 +827,7 @@
 
     function schedulePreviewUpdate() {
         clearTimeout(previewUpdateTimeout);
-        previewUpdateTimeout = setTimeout(refreshPreview, 500);
+        previewUpdateTimeout = setTimeout(refreshPreview, 1000);
     }
 
     async function refreshPreview() {
@@ -931,9 +957,20 @@
                 sourceDim.style.fontWeight = '600';
             }
 
-            // Update slider max values based on source dimensions
-            document.getElementById('width-slider').max = width;
-            document.getElementById('height-slider').max = height;
+            // Update slider ranges: min=100, max=source dimensions (prevent upscaling by default)
+            const widthSlider = document.getElementById('width-slider');
+            const heightSlider = document.getElementById('height-slider');
+
+            widthSlider.min = 100;
+            widthSlider.max = width;
+            heightSlider.min = 100;
+            heightSlider.max = height;
+
+            // Update slider labels
+            document.querySelector('.width-slider-min').textContent = '100';
+            document.querySelector('.width-slider-max').textContent = width;
+            document.querySelector('.height-slider-min').textContent = '100';
+            document.querySelector('.height-slider-max').textContent = height;
 
             // Update crop defaults to match source dimensions
             updateCropDimensionsFromSource();

@@ -15,6 +15,8 @@ from .const import (
     CONF_KEEP_RATIO,
     CONF_QUALITY,
     CONF_SOURCE_CAMERA,
+    CONF_SOURCE_HEIGHT,
+    CONF_SOURCE_WIDTH,
     CONF_STATE_ICONS,
     CONF_WIDTH,
     DEFAULT_HEIGHT,
@@ -79,12 +81,58 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
                         {"error": "Camera already configured"}, status=400
                     )
 
-            # Create new camera with default config
+            # Get camera entity to fetch source dimensions
+            camera_entity = self._get_camera_entity(source_camera)
+            if not camera_entity:
+                return web.json_response(
+                    {"error": f"Camera entity not found: {source_camera}"}, status=404
+                )
+
+            # Fetch source image to get dimensions
+            try:
+                from PIL import Image
+
+                source_image = await camera_entity.async_camera_image()
+                if not source_image:
+                    return web.json_response(
+                        {"error": f"Could not get image from camera: {source_camera}"},
+                        status=500,
+                    )
+
+                img = Image.open(io.BytesIO(source_image))
+                source_width, source_height = img.size
+
+                _LOGGER.info(
+                    "Adding camera %s with source dimensions: %dx%d",
+                    source_camera,
+                    source_width,
+                    source_height,
+                )
+
+                # Set smart defaults: min(source_size, 1920x1080) to prevent upscaling
+                default_width = min(source_width, DEFAULT_WIDTH)
+                default_height = min(source_height, DEFAULT_HEIGHT)
+
+            except Exception as err:
+                _LOGGER.warning(
+                    "Could not fetch source dimensions for %s: %s. Using fallback defaults.",
+                    source_camera,
+                    err,
+                )
+                # Fallback to static defaults if we can't get source dimensions
+                source_width = DEFAULT_WIDTH
+                source_height = DEFAULT_HEIGHT
+                default_width = DEFAULT_WIDTH
+                default_height = DEFAULT_HEIGHT
+
+            # Create new camera with smart default config
             camera_id = str(uuid.uuid4())
             cameras[camera_id] = {
                 CONF_SOURCE_CAMERA: source_camera,
-                CONF_WIDTH: DEFAULT_WIDTH,
-                CONF_HEIGHT: DEFAULT_HEIGHT,
+                CONF_SOURCE_WIDTH: source_width,
+                CONF_SOURCE_HEIGHT: source_height,
+                CONF_WIDTH: default_width,
+                CONF_HEIGHT: default_height,
                 CONF_KEEP_RATIO: DEFAULT_KEEP_RATIO,
                 CONF_QUALITY: DEFAULT_QUALITY,
                 CONF_STATE_ICONS: [],
@@ -111,6 +159,17 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
         """Get the integration entry."""
         entries = self.hass.config_entries.async_entries(DOMAIN)
         return entries[0] if entries else None
+
+    def _get_camera_entity(self, entity_id: str):
+        """Get camera entity from entity_id."""
+        component = self.hass.data.get("camera")
+        if not component:
+            return None
+
+        for entity in component.entities:
+            if entity.entity_id == entity_id:
+                return entity
+        return None
 
 
 class CameraSnapshotProcessorCameraView(HomeAssistantView):
