@@ -157,7 +157,7 @@ class SnapshotProcessorCamera(Camera):
         if self._camera_id in cameras_config:
             new_config = cameras_config[self._camera_id]
 
-            # Check if entity name changed - if so, trigger reload
+            # Check if entity name changed - if so, update entity ID directly
             old_name = (
                 self._config.get(CONF_ENTITY_NAME)
                 if CONF_ENTITY_NAME in self._config
@@ -169,26 +169,47 @@ class SnapshotProcessorCamera(Camera):
                 else None
             )
 
-            if old_name != new_name:
-                # Entity name changed - reload is needed to update entity ID
+            if old_name != new_name and new_name:
+                # Entity name changed - update entity ID directly
+                from homeassistant.helpers import entity_registry as er
+
+                entity_registry = er.async_get(self.hass)
+                desired_entity_id = f"camera.{new_name}"
+
                 _LOGGER.info(
-                    "Camera %s: Entity name changed from %s to %s - reload required",
+                    "Camera %s: Entity name changed from %s to %s, updating entity ID to %s",
                     self._camera_id,
                     old_name,
                     new_name,
+                    desired_entity_id,
                 )
-                # Trigger entry reload
-                self.hass.async_create_task(
-                    self.hass.config_entries.async_reload(self._config_entry.entry_id)
-                )
-                return
 
-            # Update config for other changes
+                try:
+                    # Update entity ID in registry
+                    entity_registry.async_update_entity(
+                        self.entity_id, new_entity_id=desired_entity_id
+                    )
+                    _LOGGER.info(
+                        "Entity ID updated successfully to %s", desired_entity_id
+                    )
+                except Exception as err:
+                    _LOGGER.error(
+                        "Failed to update entity ID to %s: %s", desired_entity_id, err
+                    )
+
+            # Update config for all changes
             self._config = new_config
             self._source_camera = self._config[CONF_SOURCE_CAMERA]
             rtsp_url = self._config.get(CONF_RTSP_URL, "")
             self._rtsp_url = rtsp_url.strip() if rtsp_url else None
             self._image_processor = ImageProcessor(self.hass, self._config)
+
+            # Update entity name attribute
+            if CONF_ENTITY_NAME in self._config and self._config[CONF_ENTITY_NAME]:
+                self._attr_name = self._config[CONF_ENTITY_NAME]
+            else:
+                source_name = self._source_camera.replace("camera.", "")
+                self._attr_name = f"{source_name}_processed"
 
             self.async_write_ha_state()
 
