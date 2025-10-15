@@ -1,0 +1,74 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Verify version matches manifest
+        run: |
+          MANIFEST_VERSION=$(python3 -c "import json; print(json.load(open('custom_components/camera_snapshot_processor/manifest.json'))['version'])")
+          TAG_VERSION="${{ steps.get_version.outputs.VERSION }}"
+          if [ "$MANIFEST_VERSION" != "$TAG_VERSION" ]; then
+            echo "❌ Version mismatch: manifest.json has $MANIFEST_VERSION but tag is v$TAG_VERSION"
+            exit 1
+          fi
+          echo "✅ Version verified: $TAG_VERSION"
+
+      - name: Create release zip
+        run: |
+          cd custom_components
+          zip -r camera_snapshot_processor-${{ steps.get_version.outputs.VERSION }}.zip camera_snapshot_processor/
+          cd ..
+          mv custom_components/camera_snapshot_processor-${{ steps.get_version.outputs.VERSION }}.zip .
+          echo "Created camera_snapshot_processor-${{ steps.get_version.outputs.VERSION }}.zip"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${GITHUB_REF#refs/tags/}$" | head -1)
+
+          if [ -z "$PREV_TAG" ]; then
+            echo "No previous tag found, this is the first release"
+            CHANGELOG="Initial release"
+          else
+            echo "Generating changelog from $PREV_TAG to ${GITHUB_REF#refs/tags/}"
+            CHANGELOG=$(git log --pretty=format:"- %s" $PREV_TAG..HEAD)
+          fi
+
+          # Save changelog to file for multiline output
+          echo "$CHANGELOG" > changelog.txt
+          echo "PREV_TAG=$PREV_TAG" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: camera_snapshot_processor-${{ steps.get_version.outputs.VERSION }}.zip
+          generate_release_notes: true
+          body_path: changelog.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release summary
+        run: |
+          echo "✅ Release v${{ steps.get_version.outputs.VERSION }} created successfully!"
+          echo "📦 Zip file: camera_snapshot_processor-${{ steps.get_version.outputs.VERSION }}.zip"
+          echo "🔗 https://github.com/${{ github.repository }}/releases/tag/v${{ steps.get_version.outputs.VERSION }}"
