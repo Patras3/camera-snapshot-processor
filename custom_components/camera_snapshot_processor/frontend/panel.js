@@ -498,7 +498,6 @@
                 opacity: false,
                 hue: true,
                 interaction: {
-                    hex: true,
                     input: true,
                     save: true
                 }
@@ -527,7 +526,6 @@
                 opacity: false,
                 hue: true,
                 interaction: {
-                    hex: true,
                     input: true,
                     save: true
                 }
