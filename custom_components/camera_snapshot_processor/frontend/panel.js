@@ -889,7 +889,10 @@
             const data = await response.json();
 
             if (!data.success) {
-                throw new Error(data.error || 'Failed to save entity name');
+                // Show the error in the modal
+                errorEl.textContent = data.error || 'Failed to save entity name';
+                errorEl.style.display = 'block';
+                return;
             }
 
             // Update local state

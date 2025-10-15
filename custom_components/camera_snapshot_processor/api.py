@@ -221,6 +221,38 @@ class CameraSnapshotProcessorCameraView(HomeAssistantView):
             # Preserve source camera
             new_config[CONF_SOURCE_CAMERA] = cameras[camera_id][CONF_SOURCE_CAMERA]
 
+            # Check for duplicate entity ID if entity_name is being changed
+            from homeassistant.helpers import entity_registry as er
+
+            from .const import CONF_ENTITY_NAME
+
+            if CONF_ENTITY_NAME in new_config and new_config[CONF_ENTITY_NAME]:
+                entity_name = new_config[CONF_ENTITY_NAME]
+                desired_entity_id = f"camera.{entity_name}"
+
+                # Get entity registry
+                entity_registry = er.async_get(self.hass)
+
+                # Check if entity ID already exists
+                existing_entry = entity_registry.async_get(desired_entity_id)
+                if existing_entry:
+                    # Get our unique_id to check if it's our own entity
+                    our_unique_id = f"{DOMAIN}_{camera_id}"
+
+                    if existing_entry.unique_id != our_unique_id:
+                        # Entity ID exists and belongs to a different entity
+                        error_msg = (
+                            f"Entity ID '{desired_entity_id}' already exists. "
+                            "Please choose a different name."
+                        )
+                        return web.json_response(
+                            {
+                                "success": False,
+                                "error": error_msg,
+                            },
+                            status=400,
+                        )
+
             # Log state icons config for debugging
             state_icons = new_config.get(CONF_STATE_ICONS, [])
             if state_icons:
