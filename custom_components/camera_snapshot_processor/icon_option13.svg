@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Camera with overlay/HUD elements (overlay processing) -->
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#1976D2" opacity="0.1"/>
+
+  <!-- Main camera body -->
+  <rect x="150" y="200" width="212" height="150" rx="12" fill="#424242"/>
+  <rect x="160" y="210" width="192" height="130" rx="8" fill="#616161"/>
+
+  <!-- Camera lens -->
+  <circle cx="256" cy="275" r="55" fill="#2196F3"/>
+  <circle cx="256" cy="275" r="45" fill="#1976D2"/>
+  <circle cx="256" cy="275" r="30" fill="#424242"/>
+  <circle cx="256" cy="275" r="20" fill="#2196F3" opacity="0.5"/>
+
+  <!-- Lens reflection -->
+  <ellipse cx="248" cy="265" rx="8" ry="12" fill="white" opacity="0.6"/>
+
+  <!-- Camera top section -->
+  <rect x="190" y="185" width="132" height="20" rx="4" fill="#616161"/>
+  <circle cx="220" cy="195" r="5" fill="#FF9800"/>
+  <circle cx="240" cy="195" r="4" fill="#4CAF50"/>
+
+  <!-- Camera mount -->
+  <rect x="235" y="350" width="42" height="30" fill="#616161"/>
+  <path d="M 235 380 L 220 410 L 292 410 L 277 380 Z" fill="#424242"/>
+
+  <!-- HUD Overlay elements -->
+
+  <!-- Top-left corner bracket -->
+  <path d="M 140 150 L 140 120 L 170 120" stroke="#2196F3" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 140 150 L 140 120 L 170 120" stroke="#2196F3" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Top-right corner bracket -->
+  <path d="M 372 150 L 372 120 L 342 120" stroke="#2196F3" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 372 150 L 372 120 L 342 120" stroke="#2196F3" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Bottom-left corner bracket -->
+  <path d="M 140 390 L 140 420 L 170 420" stroke="#2196F3" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 140 390 L 140 420 L 170 420" stroke="#2196F3" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Bottom-right corner bracket -->
+  <path d="M 372 390 L 372 420 L 342 420" stroke="#2196F3" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 372 390 L 372 420 L 342 420" stroke="#2196F3" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Timestamp overlay (top) -->
+  <rect x="175" y="130" width="162" height="22" rx="4" fill="#424242" opacity="0.8"/>
+  <text x="185" y="146" font-family="monospace" font-size="16" fill="#2196F3" font-weight="bold">2024-10-14 14:30</text>
+
+  <!-- Status indicator overlay (bottom-left) -->
+  <rect x="145" y="425" width="70" height="22" rx="4" fill="#424242" opacity="0.8"/>
+  <circle cx="157" cy="436" r="5" fill="#4CAF50">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <text x="168" y="440" font-family="Arial" font-size="14" fill="#4CAF50" font-weight="bold">REC</text>
+
+  <!-- Info overlay (bottom-right) -->
+  <rect x="297" y="425" width="70" height="22" rx="4" fill="#424242" opacity="0.8"/>
+  <text x="307" y="440" font-family="monospace" font-size="13" fill="#FF9800" font-weight="bold">1080p</text>
+
+  <!-- Crosshair center indicator -->
+  <circle cx="256" cy="275" r="65" stroke="#2196F3" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <line x1="191" y1="275" x2="206" y2="275" stroke="#2196F3" stroke-width="2" opacity="0.6"/>
+  <line x1="306" y1="275" x2="321" y2="275" stroke="#2196F3" stroke-width="2" opacity="0.6"/>
+  <line x1="256" y1="210" x2="256" y2="225" stroke="#2196F3" stroke-width="2" opacity="0.6"/>
+  <line x1="256" y1="325" x2="256" y2="340" stroke="#2196F3" stroke-width="2" opacity="0.6"/>
+
+  <!-- Scan line animation -->
+  <line x1="140" y1="270" x2="372" y2="270" stroke="#2196F3" stroke-width="2" opacity="0.3">
+    <animate attributeName="y1" values="150;390;150" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="y2" values="150;390;150" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.1;0.5;0.1" dur="3s" repeatCount="indefinite"/>
+  </line>
+</svg>

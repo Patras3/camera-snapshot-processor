@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#E3F2FD"/>
+
+  <!-- Camera body -->
+  <path d="M 140 180 L 180 180 L 195 160 L 317 160 L 332 180 L 372 180 Q 392 180 392 200 L 392 360 Q 392 380 372 380 L 140 380 Q 120 380 120 360 L 120 200 Q 120 180 140 180 Z" fill="#1976D2"/>
+
+  <!-- Camera lens -->
+  <circle cx="256" cy="270" r="70" fill="#424242"/>
+  <circle cx="256" cy="270" r="55" fill="#616161"/>
+  <circle cx="256" cy="270" r="40" fill="#424242"/>
+
+  <!-- Lens reflection -->
+  <ellipse cx="240" cy="255" rx="15" ry="20" fill="#90CAF9" opacity="0.4"/>
+
+  <!-- Flash -->
+  <rect x="330" y="195" width="30" height="20" rx="3" fill="#64B5F6"/>
+
+  <!-- Mechanical gear overlay (bottom right) -->
+  <g transform="translate(340, 320)">
+    <!-- Gear base circle -->
+    <circle cx="0" cy="0" r="50" fill="#757575"/>
+
+    <!-- Gear teeth (12 teeth evenly spaced) -->
+    <g fill="#616161">
+      <!-- Tooth 1 (top) -->
+      <rect x="-8" y="-58" width="16" height="12" rx="1"/>
+      <!-- Tooth 2 (30 degrees) -->
+      <rect x="20" y="-53" width="16" height="12" rx="1" transform="rotate(30 28 -47)"/>
+      <!-- Tooth 3 (60 degrees) -->
+      <rect x="42" y="-33" width="16" height="12" rx="1" transform="rotate(60 50 -27)"/>
+      <!-- Tooth 4 (90 degrees - right) -->
+      <rect x="50" y="-6" width="12" height="16" rx="1"/>
+      <!-- Tooth 5 (120 degrees) -->
+      <rect x="42" y="21" width="16" height="12" rx="1" transform="rotate(120 50 27)"/>
+      <!-- Tooth 6 (150 degrees) -->
+      <rect x="20" y="41" width="16" height="12" rx="1" transform="rotate(150 28 47)"/>
+      <!-- Tooth 7 (180 degrees - bottom) -->
+      <rect x="-8" y="46" width="16" height="12" rx="1"/>
+      <!-- Tooth 8 (210 degrees) -->
+      <rect x="-36" y="41" width="16" height="12" rx="1" transform="rotate(210 -28 47)"/>
+      <!-- Tooth 9 (240 degrees) -->
+      <rect x="-58" y="21" width="16" height="12" rx="1" transform="rotate(240 -50 27)"/>
+      <!-- Tooth 10 (270 degrees - left) -->
+      <rect x="-62" y="-6" width="12" height="16" rx="1"/>
+      <!-- Tooth 11 (300 degrees) -->
+      <rect x="-58" y="-33" width="16" height="12" rx="1" transform="rotate(300 -50 -27)"/>
+      <!-- Tooth 12 (330 degrees) -->
+      <rect x="-36" y="-53" width="16" height="12" rx="1" transform="rotate(330 -28 -47)"/>
+    </g>
+
+    <!-- Inner gear circle -->
+    <circle cx="0" cy="0" r="38" fill="#424242"/>
+
+    <!-- Center hole -->
+    <circle cx="0" cy="0" r="15" fill="#757575"/>
+    <circle cx="0" cy="0" r="12" fill="none" stroke="#616161" stroke-width="2"/>
+  </g>
+
+  <!-- Gear shadow -->
+  <ellipse cx="345" cy="380" rx="45" ry="8" fill="#000000" opacity="0.2"/>
+</svg>

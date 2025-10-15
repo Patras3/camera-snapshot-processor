@@ -1,0 +1,53 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- CCTV Dome Camera with Gear -->
+
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="#1976D2" opacity="0.1"/>
+
+  <!-- Dome Camera Base (mounting bracket) -->
+  <rect x="220" y="200" width="72" height="20" rx="4" fill="#616161"/>
+
+  <!-- Dome Camera Body -->
+  <ellipse cx="256" cy="260" rx="90" ry="70" fill="#424242"/>
+  <ellipse cx="256" cy="260" rx="90" ry="70" fill="url(#domeGradient)"/>
+
+  <!-- Dome Glass/Lens -->
+  <ellipse cx="256" cy="250" rx="70" ry="55" fill="#1976D2" opacity="0.3"/>
+  <ellipse cx="240" cy="240" rx="20" ry="15" fill="#ffffff" opacity="0.6"/>
+
+  <!-- Camera Lens Inside -->
+  <circle cx="256" cy="260" r="30" fill="#212121"/>
+  <circle cx="256" cy="260" r="20" fill="#1976D2"/>
+  <circle cx="250" cy="254" r="6" fill="#ffffff" opacity="0.8"/>
+
+  <!-- LED Indicator -->
+  <circle cx="216" cy="270" r="6" fill="#F44336"/>
+  <circle cx="216" cy="270" r="4" fill="#FF5252" opacity="0.8"/>
+
+  <!-- Processing Gear -->
+  <g transform="translate(340, 180)">
+    <!-- Gear body -->
+    <circle cx="0" cy="0" r="50" fill="#FF9800"/>
+    <!-- Gear teeth (12 teeth) -->
+    <g fill="#FF9800">
+      <rect x="-8" y="-58" width="16" height="12" rx="2"/>
+      <rect x="-8" y="46" width="16" height="12" rx="2" transform="rotate(180)"/>
+      <rect x="46" y="-8" width="12" height="16" rx="2" transform="rotate(90)"/>
+      <rect x="-58" y="-8" width="12" height="16" rx="2" transform="rotate(270)"/>
+      <rect x="36" y="-44" width="12" height="16" rx="2" transform="rotate(45)"/>
+      <rect x="-48" y="-44" width="12" height="16" rx="2" transform="rotate(315)"/>
+      <rect x="36" y="28" width="12" height="16" rx="2" transform="rotate(135)"/>
+      <rect x="-48" y="28" width="12" height="16" rx="2" transform="rotate(225)"/>
+    </g>
+    <!-- Gear center -->
+    <circle cx="0" cy="0" r="18" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="domeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#616161;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#212121;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

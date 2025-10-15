@@ -443,93 +443,101 @@
         // Setup interactive crop
         setupCropInteraction();
 
-        // Setup enhanced color pickers
-        setupColorPickers();
+        // Setup color picker popup
+        setupColorPickerPopup();
     }
 
-    // ==================== Enhanced Color Picker ====================
+    // ==================== Color Picker Popup ====================
 
-    function setupColorPickers() {
-        // Initialize overlay_color picker
-        setupColorPicker('overlay_color', 'overlay_color_preview', false);
+    let colorPickerCallback = null;
+    let colorPickerTargetInput = null;
 
-        // Initialize overlay_background picker (with transparency support)
-        setupColorPicker('overlay_background', 'overlay_background_preview', true);
-    }
+    function setupColorPickerPopup() {
+        const popup = document.getElementById('color-picker-popup');
+        const customBtn = document.getElementById('color-picker-custom');
 
-    function setupColorPicker(inputId, previewId, supportsTransparency) {
-        const input = document.getElementById(inputId);
-        const preview = document.getElementById(previewId);
-
-        if (!input || !preview) return;
-
-        // Update preview when input changes
-        input.addEventListener('input', () => {
-            updateColorPreview(inputId, previewId, supportsTransparency);
+        // Setup color inputs to show popup on click
+        document.querySelectorAll('input[type="color"]').forEach(input => {
+            input.addEventListener('click', (e) => {
+                e.preventDefault();
+                showColorPickerPopup(input, false);
+            });
         });
 
-        // Setup swatch click handlers
-        const colorPicker = input.closest('.color-picker-enhanced');
-        if (colorPicker) {
-            const swatches = colorPicker.querySelectorAll('.color-swatch');
-            swatches.forEach(swatch => {
-                swatch.addEventListener('click', () => {
-                    const color = swatch.getAttribute('data-color');
-                    input.value = color;
-                    updateColorPreview(inputId, previewId, supportsTransparency);
-                    schedulePreviewUpdate();
-                });
-            });
-        }
-
-        // Preview click opens color picker
-        preview.addEventListener('click', () => {
-            input.click();
+        // Custom color button opens native picker
+        customBtn.addEventListener('click', () => {
+            if (colorPickerTargetInput) {
+                closeColorPickerPopup();
+                // Open native color picker
+                colorPickerTargetInput.click();
+            }
         });
 
-        // Initial preview update
-        updateColorPreview(inputId, previewId, supportsTransparency);
+        // Close on backdrop click
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                closeColorPickerPopup();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && popup.style.display !== 'none') {
+                closeColorPickerPopup();
+            }
+        });
     }
 
-    function updateColorPreview(inputId, previewId, supportsTransparency) {
-        const input = document.getElementById(inputId);
-        const preview = document.getElementById(previewId);
+    function showColorPickerPopup(inputElement, isTransparent = false) {
+        colorPickerTargetInput = inputElement;
+        const popup = document.getElementById('color-picker-popup');
+        const swatchesGrid = document.getElementById('color-swatches-grid');
 
-        if (!input || !preview) return;
+        // Define default colors
+        const defaultColors = isTransparent ? [
+            { color: '#00000000', label: 'Transparent' },
+            { color: '#000000cc', label: 'Black 80%' },
+            { color: '#00000099', label: 'Black 60%' },
+            { color: '#ffffff99', label: 'White 60%' },
+            { color: '#ffffffcc', label: 'White 80%' },
+            { color: '#667eeacc', label: 'Purple 80%' },
+            { color: '#4caf50cc', label: 'Green 80%' },
+            { color: '#f44336cc', label: 'Red 80%' },
+        ] : [
+            { color: '#ffffff', label: 'White' },
+            { color: '#000000', label: 'Black' },
+            { color: '#ff0000', label: 'Red' },
+            { color: '#00ff00', label: 'Green' },
+            { color: '#0000ff', label: 'Blue' },
+            { color: '#ffff00', label: 'Yellow' },
+            { color: '#ffd700', label: 'Gold' },
+            { color: '#ff9800', label: 'Orange' },
+        ];
 
-        const color = input.value;
-
-        if (supportsTransparency) {
-            // For background color (RGBA hex format)
-            const colorDiv = document.createElement('div');
-            colorDiv.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: ${color};
-                border-radius: 6px;
-            `;
-            preview.innerHTML = '';
-            preview.appendChild(colorDiv);
-        } else {
-            // For simple color picker
-            preview.style.backgroundColor = color;
-        }
-
-        // Update active swatch indicator
-        const colorPicker = input.closest('.color-picker-enhanced');
-        if (colorPicker) {
-            const swatches = colorPicker.querySelectorAll('.color-swatch');
-            swatches.forEach(swatch => {
-                if (swatch.getAttribute('data-color').toLowerCase() === color.toLowerCase()) {
-                    swatch.classList.add('active');
-                } else {
-                    swatch.classList.remove('active');
-                }
+        // Render swatches
+        swatchesGrid.innerHTML = '';
+        defaultColors.forEach(({ color, label }) => {
+            const swatch = document.createElement('button');
+            swatch.type = 'button';
+            swatch.className = 'color-swatch';
+            swatch.style.background = color;
+            swatch.title = label;
+            swatch.addEventListener('click', () => {
+                inputElement.value = color;
+                closeColorPickerPopup();
+                schedulePreviewUpdate();
             });
-        }
+            swatchesGrid.appendChild(swatch);
+        });
+
+        // Show popup
+        popup.style.display = 'flex';
+    }
+
+    function closeColorPickerPopup() {
+        const popup = document.getElementById('color-picker-popup');
+        popup.style.display = 'none';
+        colorPickerTargetInput = null;
     }
 
     // ==================== Camera Management ====================
@@ -822,10 +830,6 @@
             setInputValue('overlay_color', hexColor);
         }
         setInputValue('overlay_background', config.overlay_background || '#00000000');
-
-        // Update color previews
-        updateColorPreview('overlay_color', 'overlay_color_preview', false);
-        updateColorPreview('overlay_background', 'overlay_background_preview', true);
 
         // Stream
         setInputValue('rtsp_url', config.rtsp_url || '');

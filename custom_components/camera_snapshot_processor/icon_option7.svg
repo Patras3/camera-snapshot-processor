@@ -1,0 +1,62 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Security Camera with Motion Detection Waves -->
+
+  <!-- Motion Detection Waves -->
+  <g opacity="0.4" stroke="#FF9800" fill="none" stroke-width="6">
+    <path d="M 180 200 Q 140 240 180 280" stroke-linecap="round"/>
+    <path d="M 160 180 Q 110 240 160 300" stroke-linecap="round"/>
+    <path d="M 140 160 Q 80 240 140 320" stroke-linecap="round"/>
+  </g>
+
+  <!-- Security Camera Body (bullet style) -->
+  <!-- Mounting bracket -->
+  <rect x="260" y="200" width="40" height="80" rx="8" fill="#424242"/>
+  <circle cx="280" cy="240" r="8" fill="#212121"/>
+
+  <!-- Camera cylinder -->
+  <ellipse cx="340" cy="240" rx="80" ry="40" fill="#616161"/>
+  <rect x="260" y="200" width="80" height="80" fill="#616161"/>
+  <rect x="260" y="200" width="80" height="80" fill="url(#cameraGradient)"/>
+
+  <!-- Camera front face -->
+  <ellipse cx="340" cy="240" rx="80" ry="40" fill="#424242"/>
+  <ellipse cx="340" cy="240" rx="80" ry="40" fill="url(#faceGradient)"/>
+
+  <!-- Lens -->
+  <circle cx="340" cy="240" r="35" fill="#212121"/>
+  <circle cx="340" cy="240" r="28" fill="#1976D2"/>
+  <circle cx="335" cy="235" r="10" fill="#2196F3"/>
+  <circle cx="330" cy="230" r="4" fill="#ffffff" opacity="0.9"/>
+
+  <!-- IR LEDs ring -->
+  <circle cx="340" cy="200" r="5" fill="#8B0000"/>
+  <circle cx="340" cy="280" r="5" fill="#8B0000"/>
+  <circle cx="300" cy="240" r="5" fill="#8B0000"/>
+  <circle cx="380" cy="240" r="5" fill="#8B0000"/>
+
+  <!-- Recording indicator -->
+  <circle cx="380" cy="205" r="8" fill="#F44336"/>
+  <circle cx="380" cy="205" r="6" fill="#FF5252"/>
+
+  <!-- Motion Detection Icon -->
+  <g transform="translate(340, 340)">
+    <circle cx="0" cy="0" r="45" fill="#FF9800"/>
+    <!-- Running person icon -->
+    <circle cx="-8" cy="-15" r="8" fill="#FFFFFF"/>
+    <path d="M -12 0 L -4 0 L 0 20 L -8 20 Z" fill="#FFFFFF"/>
+    <path d="M -4 0 L 8 0 L 12 20 L 4 20 Z" fill="#FFFFFF"/>
+    <path d="M -4 -2 L 10 -8 L 12 0 L -4 6 Z" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="cameraGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#757575;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#424242;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="faceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#616161;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#212121;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

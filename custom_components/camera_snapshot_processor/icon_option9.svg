@@ -1,0 +1,92 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- PTZ (Pan-Tilt-Zoom) Camera with Directional Arrows -->
+
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="#1976D2" opacity="0.08"/>
+
+  <!-- Directional Control Arrows -->
+  <!-- Pan Left -->
+  <path d="M 80 240 L 130 210 L 130 230 L 160 230 L 160 250 L 130 250 L 130 270 Z" fill="#FF9800" opacity="0.7"/>
+  <!-- Pan Right -->
+  <path d="M 432 240 L 382 210 L 382 230 L 352 230 L 352 250 L 382 250 L 382 270 Z" fill="#FF9800" opacity="0.7"/>
+  <!-- Tilt Up -->
+  <path d="M 256 80 L 226 130 L 246 130 L 246 160 L 266 160 L 266 130 L 286 130 Z" fill="#FF9800" opacity="0.7"/>
+  <!-- Tilt Down -->
+  <path d="M 256 432 L 286 382 L 266 382 L 266 352 L 246 352 L 246 382 L 226 382 Z" fill="#FF9800" opacity="0.7"/>
+
+  <!-- PTZ Camera Base/Mount -->
+  <ellipse cx="256" cy="300" rx="70" ry="20" fill="#424242"/>
+  <rect x="186" y="280" width="140" height="20" fill="#424242"/>
+  <rect x="186" y="280" width="140" height="20" fill="url(#baseGradient)"/>
+
+  <!-- Rotating Base -->
+  <ellipse cx="256" cy="280" rx="60" ry="18" fill="#616161"/>
+
+  <!-- Camera Mount Arm -->
+  <rect x="240" y="220" width="32" height="60" rx="6" fill="#757575"/>
+  <rect x="240" y="220" width="32" height="60" rx="6" fill="url(#armGradient)"/>
+
+  <!-- PTZ Camera Head -->
+  <!-- Main body -->
+  <ellipse cx="256" cy="200" rx="55" ry="45" fill="#424242"/>
+  <ellipse cx="256" cy="200" rx="55" ry="45" fill="url(#headGradient)"/>
+
+  <!-- Camera lens housing -->
+  <circle cx="256" cy="200" r="40" fill="#212121"/>
+  <circle cx="256" cy="200" r="35" fill="#1976D2"/>
+  <circle cx="250" cy="194" r="15" fill="#2196F3"/>
+  <circle cx="245" cy="189" r="6" fill="#ffffff" opacity="0.9"/>
+
+  <!-- LED indicator -->
+  <circle cx="220" cy="180" r="6" fill="#4CAF50"/>
+  <circle cx="220" cy="180" r="4" fill="#81C784"/>
+
+  <!-- Zoom indicator lines -->
+  <path d="M 200 200 L 185 200" stroke="#FFFFFF" stroke-width="3" opacity="0.4" stroke-linecap="round"/>
+  <path d="M 195 210 L 180 215" stroke="#FFFFFF" stroke-width="3" opacity="0.4" stroke-linecap="round"/>
+  <path d="M 195 190 L 180 185" stroke="#FFFFFF" stroke-width="3" opacity="0.4" stroke-linecap="round"/>
+
+  <!-- Processing Gear Badge -->
+  <g transform="translate(340, 320)">
+    <circle cx="0" cy="0" r="50" fill="#FFFFFF"/>
+    <circle cx="0" cy="0" r="48" fill="#2196F3"/>
+    <!-- Gear teeth (10 teeth) -->
+    <g fill="#2196F3">
+      <rect x="-6" y="-54" width="12" height="10" rx="2"/>
+      <rect x="-6" y="44" width="12" height="10" rx="2"/>
+      <rect x="44" y="-6" width="10" height="12" rx="2"/>
+      <rect x="-54" y="-6" width="10" height="12" rx="2"/>
+      <rect x="34" y="-40" width="10" height="12" rx="2" transform="rotate(45 340 320)"/>
+      <rect x="-44" y="-40" width="10" height="12" rx="2" transform="rotate(-45 340 320)"/>
+      <rect x="34" y="28" width="10" height="12" rx="2" transform="rotate(135 340 320)"/>
+      <rect x="-44" y="28" width="10" height="12" rx="2" transform="rotate(-135 340 320)"/>
+      <rect x="47" y="-22" width="10" height="12" rx="2" transform="rotate(22.5 340 320)"/>
+      <rect x="-57" y="-22" width="10" height="12" rx="2" transform="rotate(-22.5 340 320)"/>
+    </g>
+    <!-- Center circle -->
+    <circle cx="0" cy="0" r="18" fill="#FFFFFF"/>
+    <!-- Sliders icon for settings -->
+    <rect x="-12" y="-8" width="4" height="16" rx="2" fill="#2196F3"/>
+    <rect x="-2" y="-8" width="4" height="16" rx="2" fill="#2196F3"/>
+    <rect x="8" y="-8" width="4" height="16" rx="2" fill="#2196F3"/>
+    <circle cx="-10" cy="-2" r="3" fill="#2196F3"/>
+    <circle cx="0" cy="2" r="3" fill="#2196F3"/>
+    <circle cx="10" cy="-4" r="3" fill="#2196F3"/>
+  </g>
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="baseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#616161;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#212121;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="armGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#9E9E9E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#616161;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="headGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#616161;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#212121;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

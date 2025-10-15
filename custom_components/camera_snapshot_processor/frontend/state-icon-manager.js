@@ -605,40 +605,14 @@
                         </div>
                     </div>
 
-                    <div style="grid-column: 1 / -1;">
+                    <div>
                         <label>Icon Color:</label>
-                        <div class="color-picker-enhanced">
-                            <div class="color-preview rule-icon-color-preview"></div>
-                            <input type="color" class="rule-icon-color" value="${this.rgbToHex(rule.icon_color)}">
-                            <div class="color-swatches">
-                                <button type="button" class="color-swatch" data-color="#ffffff" title="White" style="background: #ffffff;"></button>
-                                <button type="button" class="color-swatch" data-color="#000000" title="Black" style="background: #000000;"></button>
-                                <button type="button" class="color-swatch" data-color="#ffd700" title="Gold" style="background: #ffd700;"></button>
-                                <button type="button" class="color-swatch" data-color="#ff0000" title="Red" style="background: #ff0000;"></button>
-                                <button type="button" class="color-swatch" data-color="#00ff00" title="Green" style="background: #00ff00;"></button>
-                                <button type="button" class="color-swatch" data-color="#0000ff" title="Blue" style="background: #0000ff;"></button>
-                                <button type="button" class="color-swatch" data-color="#ffff00" title="Yellow" style="background: #ffff00;"></button>
-                                <button type="button" class="color-swatch" data-color="#ff9800" title="Orange" style="background: #ff9800;"></button>
-                            </div>
-                        </div>
+                        <input type="color" class="rule-icon-color" value="${this.rgbToHex(rule.icon_color)}">
                     </div>
 
-                    <div style="grid-column: 1 / -1;">
+                    <div>
                         <label>Text Color:</label>
-                        <div class="color-picker-enhanced">
-                            <div class="color-preview rule-text-color-preview"></div>
-                            <input type="color" class="rule-text-color" value="${this.rgbToHex(rule.text_color)}">
-                            <div class="color-swatches">
-                                <button type="button" class="color-swatch" data-color="#ffffff" title="White" style="background: #ffffff;"></button>
-                                <button type="button" class="color-swatch" data-color="#000000" title="Black" style="background: #000000;"></button>
-                                <button type="button" class="color-swatch" data-color="#cccccc" title="Gray" style="background: #cccccc;"></button>
-                                <button type="button" class="color-swatch" data-color="#ffd700" title="Gold" style="background: #ffd700;"></button>
-                                <button type="button" class="color-swatch" data-color="#ff0000" title="Red" style="background: #ff0000;"></button>
-                                <button type="button" class="color-swatch" data-color="#00ff00" title="Green" style="background: #00ff00;"></button>
-                                <button type="button" class="color-swatch" data-color="#0000ff" title="Blue" style="background: #0000ff;"></button>
-                                <button type="button" class="color-swatch" data-color="#ff9800" title="Orange" style="background: #ff9800;"></button>
-                            </div>
-                        </div>
+                        <input type="color" class="rule-text-color" value="${this.rgbToHex(rule.text_color)}">
                     </div>
 
                     <div>
@@ -707,59 +681,6 @@
             body.querySelector('[data-action="cancel-rule"]').addEventListener('click', () => {
                 this.renderStateRules();
             });
-
-            // Setup color pickers
-            this.setupStateRuleColorPicker(body, '.rule-icon-color', '.rule-icon-color-preview');
-            this.setupStateRuleColorPicker(body, '.rule-text-color', '.rule-text-color-preview');
-        }
-
-        setupStateRuleColorPicker(container, inputSelector, previewSelector) {
-            const input = container.querySelector(inputSelector);
-            const preview = container.querySelector(previewSelector);
-
-            if (!input || !preview) return;
-
-            // Update preview when input changes
-            const updatePreview = () => {
-                const color = input.value;
-                preview.style.backgroundColor = color;
-
-                // Update active swatch
-                const colorPicker = input.closest('.color-picker-enhanced');
-                if (colorPicker) {
-                    const swatches = colorPicker.querySelectorAll('.color-swatch');
-                    swatches.forEach(swatch => {
-                        if (swatch.getAttribute('data-color').toLowerCase() === color.toLowerCase()) {
-                            swatch.classList.add('active');
-                        } else {
-                            swatch.classList.remove('active');
-                        }
-                    });
-                }
-            };
-
-            input.addEventListener('input', updatePreview);
-
-            // Setup swatch click handlers
-            const colorPicker = input.closest('.color-picker-enhanced');
-            if (colorPicker) {
-                const swatches = colorPicker.querySelectorAll('.color-swatch');
-                swatches.forEach(swatch => {
-                    swatch.addEventListener('click', () => {
-                        const color = swatch.getAttribute('data-color');
-                        input.value = color;
-                        updatePreview();
-                    });
-                });
-            }
-
-            // Preview click opens color picker
-            preview.addEventListener('click', () => {
-                input.click();
-            });
-
-            // Initial preview update
-            updatePreview();
         }
 
         async testTemplate(body) {

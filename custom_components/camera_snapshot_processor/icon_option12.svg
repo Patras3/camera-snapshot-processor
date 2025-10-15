@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Multiple camera feeds grid (multi-camera monitoring) -->
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#2196F3" opacity="0.1"/>
+
+  <!-- Grid of 4 camera feeds -->
+
+  <!-- Top-left feed -->
+  <rect x="120" y="130" width="140" height="105" rx="6" fill="#424242" stroke="#2196F3" stroke-width="3"/>
+  <rect x="128" y="138" width="124" height="89" fill="#616161"/>
+  <circle cx="190" cy="182" r="25" fill="#1976D2"/>
+  <circle cx="190" cy="182" r="15" fill="#2196F3"/>
+  <text x="135" y="220" font-family="Arial" font-size="14" fill="white" opacity="0.7">CAM 1</text>
+
+  <!-- Top-right feed -->
+  <rect x="272" y="130" width="140" height="105" rx="6" fill="#424242" stroke="#4CAF50" stroke-width="3"/>
+  <rect x="280" y="138" width="124" height="89" fill="#616161"/>
+  <circle cx="342" cy="182" r="25" fill="#1976D2"/>
+  <circle cx="342" cy="182" r="15" fill="#2196F3"/>
+  <text x="287" y="220" font-family="Arial" font-size="14" fill="white" opacity="0.7">CAM 2</text>
+
+  <!-- Bottom-left feed -->
+  <rect x="120" y="257" width="140" height="105" rx="6" fill="#424242" stroke="#FF9800" stroke-width="3"/>
+  <rect x="128" y="265" width="124" height="89" fill="#616161"/>
+  <circle cx="190" cy="309" r="25" fill="#1976D2"/>
+  <circle cx="190" cy="309" r="15" fill="#2196F3"/>
+  <text x="135" y="347" font-family="Arial" font-size="14" fill="white" opacity="0.7">CAM 3</text>
+
+  <!-- Bottom-right feed -->
+  <rect x="272" y="257" width="140" height="105" rx="6" fill="#424242" stroke="#9C27B0" stroke-width="3"/>
+  <rect x="280" y="265" width="124" height="89" fill="#616161"/>
+  <circle cx="342" cy="309" r="25" fill="#1976D2"/>
+  <circle cx="342" cy="309" r="15" fill="#2196F2"/>
+  <text x="287" y="347" font-family="Arial" font-size="14" fill="white" opacity="0.7">CAM 4</text>
+
+  <!-- Active recording indicators -->
+  <circle cx="252" cy="140" r="6" fill="#FF0000">
+    <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="404" cy="140" r="6" fill="#FF0000">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="252" cy="267" r="6" fill="#FF0000">
+    <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="404" cy="267" r="6" fill="#FF0000">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Central processing indicator -->
+  <circle cx="256" cy="245" r="18" fill="white" opacity="0.9"/>
+  <circle cx="256" cy="245" r="14" fill="#2196F3"/>
+  <path d="M 246 245 L 256 235 L 266 245 L 256 255 Z" fill="white"/>
+
+  <!-- Connection lines from center to feeds (subtle) -->
+  <line x1="256" y1="245" x2="190" y2="182" stroke="#2196F3" stroke-width="1.5" opacity="0.3"/>
+  <line x1="256" y1="245" x2="342" y2="182" stroke="#2196F3" stroke-width="1.5" opacity="0.3"/>
+  <line x1="256" y1="245" x2="190" y2="309" stroke="#2196F3" stroke-width="1.5" opacity="0.3"/>
+  <line x1="256" y1="245" x2="342" y2="309" stroke="#2196F3" stroke-width="1.5" opacity="0.3"/>
+</svg>

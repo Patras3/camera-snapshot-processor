@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Camera with eye/vision symbol (AI surveillance) -->
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#1976D2" opacity="0.1"/>
+
+  <!-- Main camera body -->
+  <rect x="160" y="180" width="192" height="140" rx="12" fill="#424242"/>
+  <rect x="170" y="190" width="172" height="120" rx="8" fill="#616161"/>
+
+  <!-- Camera lens ring -->
+  <circle cx="256" cy="250" r="60" fill="#2196F3"/>
+  <circle cx="256" cy="250" r="50" fill="#1976D2"/>
+  <circle cx="256" cy="250" r="35" fill="#424242"/>
+
+  <!-- Eye inside lens - AI vision -->
+  <ellipse cx="256" cy="250" rx="28" ry="20" fill="white"/>
+  <circle cx="256" cy="250" r="12" fill="#9C27B0"/>
+  <circle cx="260" cy="246" r="4" fill="white" opacity="0.8"/>
+
+  <!-- AI scan lines emanating from eye -->
+  <path d="M 220 250 L 180 250" stroke="#9C27B0" stroke-width="2" opacity="0.6"/>
+  <path d="M 292 250 L 332 250" stroke="#9C27B0" stroke-width="2" opacity="0.6"/>
+  <path d="M 235 225 L 210 200" stroke="#9C27B0" stroke-width="2" opacity="0.6"/>
+  <path d="M 277 225 L 302 200" stroke="#9C27B0" stroke-width="2" opacity="0.6"/>
+  <path d="M 235 275 L 210 300" stroke="#9C27B0" stroke-width="2" opacity="0.6"/>
+  <path d="M 277 275 L 302 300" stroke="#9C27B0" stroke-width="2" opacity="0.6"/>
+
+  <!-- Camera top detail -->
+  <rect x="200" y="165" width="112" height="20" rx="4" fill="#616161"/>
+  <circle cx="230" cy="175" r="5" fill="#FF9800"/>
+
+  <!-- Camera mount bracket -->
+  <rect x="240" y="320" width="32" height="25" fill="#616161"/>
+  <path d="M 240 345 L 230 370 L 282 370 L 272 345 Z" fill="#424242"/>
+
+  <!-- AI indicator dots -->
+  <circle cx="180" cy="200" r="4" fill="#9C27B0" opacity="0.8">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="332" cy="200" r="4" fill="#9C27B0" opacity="0.8">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#E3F2FD"/>
+
+  <!-- Camera body -->
+  <path d="M 160 160 L 200 160 L 215 140 L 297 140 L 312 160 L 352 160 Q 372 160 372 180 L 372 320 Q 372 340 352 340 L 160 340 Q 140 340 140 320 L 140 180 Q 140 160 160 160 Z" fill="#1976D2"/>
+
+  <!-- Camera lens -->
+  <circle cx="256" cy="240" r="55" fill="#424242"/>
+  <circle cx="256" cy="240" r="42" fill="#616161"/>
+  <circle cx="256" cy="240" r="28" fill="#424242"/>
+
+  <!-- Lens reflection -->
+  <ellipse cx="243" cy="228" rx="12" ry="16" fill="#90CAF9" opacity="0.4"/>
+
+  <!-- Flash -->
+  <rect x="315" y="180" width="25" height="18" rx="3" fill="#64B5F6"/>
+
+  <!-- Slider controls (3 sliders below camera) -->
+  <g transform="translate(0, 60)">
+    <!-- Slider 1 (brightness) -->
+    <rect x="120" y="330" width="272" height="8" rx="4" fill="#BDBDBD"/>
+    <rect x="120" y="330" width="180" height="8" rx="4" fill="#FF9800"/>
+    <circle cx="300" cy="334" r="14" fill="#FF9800" stroke="#FFFFFF" stroke-width="3"/>
+
+    <!-- Slider 2 (contrast) -->
+    <rect x="120" y="365" width="272" height="8" rx="4" fill="#BDBDBD"/>
+    <rect x="120" y="365" width="220" height="8" rx="4" fill="#FF9800"/>
+    <circle cx="340" cy="369" r="14" fill="#FF9800" stroke="#FFFFFF" stroke-width="3"/>
+
+    <!-- Slider 3 (saturation) -->
+    <rect x="120" y="400" width="272" height="8" rx="4" fill="#BDBDBD"/>
+    <rect x="120" y="400" width="140" height="8" rx="4" fill="#FF9800"/>
+    <circle cx="260" cy="404" r="14" fill="#FF9800" stroke="#FFFFFF" stroke-width="3"/>
+  </g>
+
+  <!-- Slider labels -->
+  <g fill="#757575" font-family="Arial, sans-serif" font-size="20" font-weight="bold">
+    <text x="80" y="398" text-anchor="end">B</text>
+    <text x="80" y="433" text-anchor="end">C</text>
+    <text x="80" y="468" text-anchor="end">S</text>
+  </g>
+</svg>

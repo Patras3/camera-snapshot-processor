@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Camera with zoom/magnify glass (image enhancement) -->
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#2196F3" opacity="0.1"/>
+
+  <!-- Main camera body (positioned left) -->
+  <rect x="120" y="190" width="180" height="130" rx="12" fill="#424242"/>
+  <rect x="130" y="200" width="160" height="110" rx="8" fill="#616161"/>
+
+  <!-- Camera lens -->
+  <circle cx="210" cy="255" r="50" fill="#2196F3"/>
+  <circle cx="210" cy="255" r="40" fill="#1976D2"/>
+  <circle cx="210" cy="255" r="28" fill="#424242"/>
+  <circle cx="210" cy="255" r="18" fill="#2196F3" opacity="0.5"/>
+
+  <!-- Lens reflection -->
+  <ellipse cx="203" cy="247" rx="7" ry="10" fill="white" opacity="0.6"/>
+
+  <!-- Camera top section -->
+  <rect x="150" y="175" width="120" height="20" rx="4" fill="#616161"/>
+  <circle cx="180" cy="185" r="5" fill="#FF9800"/>
+  <circle cx="200" cy="185" r="4" fill="#4CAF50"/>
+
+  <!-- Camera side detail -->
+  <rect x="270" y="220" width="30" height="70" rx="4" fill="#616161"/>
+  <circle cx="285" cy="255" r="8" fill="#424242"/>
+
+  <!-- Camera mount -->
+  <rect x="190" y="320" width="40" height="25" fill="#616161"/>
+  <path d="M 190 345 L 180 370 L 250 370 L 240 345 Z" fill="#424242"/>
+
+  <!-- Magnifying glass overlay (large, prominent) -->
+  <!-- Glass handle -->
+  <rect x="340" y="330" width="12" height="65" rx="6" fill="#616161" transform="rotate(-45 346 362)"/>
+
+  <!-- Glass rim -->
+  <circle cx="320" cy="230" r="72" fill="none" stroke="#424242" stroke-width="10"/>
+  <circle cx="320" cy="230" r="72" fill="none" stroke="#2196F3" stroke-width="6"/>
+
+  <!-- Glass surface with glare -->
+  <circle cx="320" cy="230" r="66" fill="#2196F3" opacity="0.15"/>
+
+  <!-- Magnified content inside glass -->
+  <g clip-path="url(#glassClip)">
+    <clipPath id="glassClip">
+      <circle cx="320" cy="230" r="60"/>
+    </clipPath>
+
+    <!-- Grid pattern (representing enhanced detail) -->
+    <line x1="280" y1="190" x2="280" y2="270" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+    <line x1="300" y1="190" x2="300" y2="270" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+    <line x1="320" y1="190" x2="320" y2="270" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+    <line x1="340" y1="190" x2="340" y2="270" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+    <line x1="360" y1="190" x2="360" y2="270" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+
+    <line x1="260" y1="210" x2="380" y2="210" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+    <line x1="260" y1="230" x2="380" y2="230" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+    <line x1="260" y1="250" x2="380" y2="250" stroke="#1976D2" stroke-width="1" opacity="0.4"/>
+
+    <!-- Enhanced detail pixels -->
+    <rect x="295" y="215" width="10" height="10" fill="#2196F3" opacity="0.7"/>
+    <rect x="315" y="215" width="10" height="10" fill="#2196F3" opacity="0.5"/>
+    <rect x="335" y="215" width="10" height="10" fill="#2196F3" opacity="0.6"/>
+    <rect x="295" y="235" width="10" height="10" fill="#2196F3" opacity="0.6"/>
+    <rect x="315" y="235" width="10" height="10" fill="#2196F3" opacity="0.8"/>
+    <rect x="335" y="235" width="10" height="10" fill="#2196F3" opacity="0.5"/>
+  </g>
+
+  <!-- Glass shine/glare effect -->
+  <ellipse cx="305" cy="215" rx="18" ry="25" fill="white" opacity="0.4"/>
+  <ellipse cx="340" cy="245" rx="12" ry="18" fill="white" opacity="0.25"/>
+
+  <!-- Zoom level indicator -->
+  <g transform="translate(315, 285)">
+    <rect x="-22" y="-10" width="44" height="18" rx="9" fill="#FF9800" opacity="0.9"/>
+    <text x="0" y="4" font-family="Arial" font-size="14" fill="white" font-weight="bold" text-anchor="middle">2x</text>
+  </g>
+
+  <!-- Enhancement sparkles around magnifying glass -->
+  <circle cx="265" cy="190" r="4" fill="#FF9800">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="375" cy="190" r="4" fill="#FF9800">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="375" cy="270" r="4" fill="#FF9800">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

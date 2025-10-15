@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#E3F2FD"/>
+
+  <!-- Left half - "Before" (darker, unprocessed look) -->
+  <g>
+    <!-- Left camera body half -->
+    <path d="M 80 200 L 120 200 L 135 180 L 246 180 L 256 200 L 256 360 L 256 380 L 100 380 Q 80 380 80 360 Z" fill="#1565C0"/>
+
+    <!-- Left lens half -->
+    <path d="M 256 290 Q 256 230 206 230 Q 156 230 156 290 Q 156 350 206 350 Q 256 350 256 290 Z" fill="#424242"/>
+    <path d="M 256 290 Q 256 242 218 242 Q 180 242 180 290 Q 180 338 218 338 Q 256 338 256 290 Z" fill="#616161"/>
+    <path d="M 256 290 Q 256 255 230 255 Q 204 255 204 290 Q 204 325 230 325 Q 256 325 256 290 Z" fill="#424242"/>
+
+    <!-- Dull reflection -->
+    <ellipse cx="195" cy="275" rx="12" ry="16" fill="#78909C" opacity="0.3"/>
+
+    <!-- "BEFORE" label -->
+    <text x="168" y="430" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#757575" text-anchor="middle">BEFORE</text>
+  </g>
+
+  <!-- Right half - "After" (bright, enhanced look) -->
+  <g>
+    <!-- Right camera body half -->
+    <path d="M 256 200 L 256 180 L 377 180 L 392 200 L 432 200 Q 452 200 452 220 L 452 360 Q 452 380 432 380 L 256 380 L 256 360 Z" fill="#2196F3"/>
+
+    <!-- Right lens half -->
+    <path d="M 256 290 Q 256 230 306 230 Q 356 230 356 290 Q 356 350 306 350 Q 256 350 256 290 Z" fill="#424242"/>
+    <path d="M 256 290 Q 256 242 294 242 Q 332 242 332 290 Q 332 338 294 338 Q 256 338 256 290 Z" fill="#616161"/>
+    <path d="M 256 290 Q 256 255 282 255 Q 308 255 308 290 Q 308 325 282 325 Q 256 325 256 290 Z" fill="#424242"/>
+
+    <!-- Bright reflection -->
+    <ellipse cx="290" cy="275" rx="14" ry="18" fill="#90CAF9" opacity="0.6"/>
+
+    <!-- Flash (only on right) -->
+    <rect x="385" y="225" width="28" height="20" rx="3" fill="#64B5F6"/>
+
+    <!-- Enhancement sparkles (only on right) -->
+    <g fill="#FF9800">
+      <path d="M 400 150 L 403 160 L 413 163 L 403 166 L 400 176 L 397 166 L 387 163 L 397 160 Z"/>
+      <circle cx="400" cy="163" r="3" fill="#FFFFFF"/>
+    </g>
+    <g fill="#FFC107">
+      <path d="M 360 130 L 362 137 L 369 139 L 362 141 L 360 148 L 358 141 L 351 139 L 358 137 Z"/>
+    </g>
+    <g fill="#FFC107">
+      <path d="M 420 340 L 422 347 L 429 349 L 422 351 L 420 358 L 418 351 L 411 349 L 418 347 Z"/>
+    </g>
+
+    <!-- "AFTER" label -->
+    <text x="344" y="430" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FF9800" text-anchor="middle">AFTER</text>
+  </g>
+
+  <!-- Central dividing line -->
+  <line x1="256" y1="160" x2="256" y2="410" stroke="#FFFFFF" stroke-width="4"/>
+  <line x1="256" y1="160" x2="256" y2="410" stroke="#FF9800" stroke-width="2"/>
+
+  <!-- Arrow indicating transformation (subtle) -->
+  <g fill="#FF9800" opacity="0.7">
+    <path d="M 230 450 L 282 450 L 282 445 L 295 455 L 282 465 L 282 460 L 230 460 Z"/>
+  </g>
+</svg>

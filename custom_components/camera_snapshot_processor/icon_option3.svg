@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#E3F2FD"/>
+
+  <!-- Camera body -->
+  <path d="M 140 200 L 180 200 L 195 180 L 317 180 L 332 200 L 372 200 Q 392 200 392 220 L 392 360 Q 392 380 372 380 L 140 380 Q 120 380 120 360 L 120 220 Q 120 200 140 200 Z" fill="#1976D2"/>
+
+  <!-- Camera lens -->
+  <circle cx="256" cy="290" r="60" fill="#424242"/>
+  <circle cx="256" cy="290" r="48" fill="#616161"/>
+  <circle cx="256" cy="290" r="35" fill="#424242"/>
+
+  <!-- Lens reflection -->
+  <ellipse cx="242" cy="277" rx="14" ry="18" fill="#90CAF9" opacity="0.4"/>
+
+  <!-- Flash -->
+  <rect x="325" y="222" width="28" height="20" rx="3" fill="#64B5F6"/>
+
+  <!-- Crop marks / Frame corners -->
+  <!-- Top-left corner -->
+  <g stroke="#FF9800" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M 100 130 L 100 100 L 130 100"/>
+    <path d="M 100 130 L 100 100 L 130 100" stroke="#FFFFFF" stroke-width="3"/>
+  </g>
+
+  <!-- Top-right corner -->
+  <g stroke="#FF9800" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M 412 130 L 412 100 L 382 100"/>
+    <path d="M 412 130 L 412 100 L 382 100" stroke="#FFFFFF" stroke-width="3"/>
+  </g>
+
+  <!-- Bottom-left corner -->
+  <g stroke="#FF9800" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M 100 410 L 100 440 L 130 440"/>
+    <path d="M 100 410 L 100 440 L 130 440" stroke="#FFFFFF" stroke-width="3"/>
+  </g>
+
+  <!-- Bottom-right corner -->
+  <g stroke="#FF9800" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M 412 410 L 412 440 L 382 440"/>
+    <path d="M 412 410 L 412 440 L 382 440" stroke="#FFFFFF" stroke-width="3"/>
+  </g>
+
+  <!-- Center crosshair (subtle) -->
+  <g stroke="#FF9800" stroke-width="2" opacity="0.5">
+    <line x1="256" y1="60" x2="256" y2="80"/>
+    <line x1="256" y1="472" x2="256" y2="452"/>
+    <line x1="60" y1="270" x2="80" y2="270"/>
+    <line x1="472" y1="270" x2="452" y2="270"/>
+  </g>
+
+  <!-- Grid dots (suggesting crop/align grid) -->
+  <g fill="#FF9800" opacity="0.3">
+    <circle cx="171" cy="185" r="3"/>
+    <circle cx="256" cy="185" r="3"/>
+    <circle cx="341" cy="185" r="3"/>
+    <circle cx="171" cy="270" r="3"/>
+    <circle cx="341" cy="270" r="3"/>
+    <circle cx="171" cy="355" r="3"/>
+    <circle cx="256" cy="355" r="3"/>
+    <circle cx="341" cy="355" r="3"/>
+  </g>
+</svg>

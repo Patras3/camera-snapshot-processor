@@ -1,0 +1,94 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bullet CCTV Camera with Recording Indicator -->
+
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="#424242" opacity="0.1"/>
+
+  <!-- Camera Mounting Bracket -->
+  <path d="M 160 280 L 180 260 L 180 220 L 160 200 L 150 200 L 150 280 Z" fill="#616161"/>
+  <circle cx="165" cy="240" r="12" fill="#424242"/>
+  <circle cx="165" cy="240" r="6" fill="#212121"/>
+
+  <!-- Camera Body (bullet/cylinder) -->
+  <!-- Back section -->
+  <rect x="180" y="200" width="60" height="80" fill="#616161"/>
+  <rect x="180" y="200" width="60" height="80" fill="url(#bodyGradient)"/>
+
+  <!-- Middle section -->
+  <rect x="240" y="210" width="80" height="60" fill="#757575"/>
+  <rect x="240" y="210" width="80" height="60" fill="url(#midGradient)"/>
+
+  <!-- Front cylinder -->
+  <ellipse cx="320" cy="240" rx="60" ry="30" fill="#424242"/>
+  <ellipse cx="320" cy="240" rx="60" ry="30" fill="url(#frontGradient)"/>
+
+  <!-- Lens assembly -->
+  <circle cx="320" cy="240" r="35" fill="#212121"/>
+  <circle cx="320" cy="240" r="30" fill="#1976D2"/>
+  <circle cx="315" cy="235" r="12" fill="#2196F3"/>
+  <circle cx="310" cy="230" r="5" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Sun shield -->
+  <ellipse cx="380" cy="240" rx="25" ry="32" fill="none" stroke="#424242" stroke-width="6"/>
+
+  <!-- Recording Status Indicator -->
+  <g transform="translate(200, 150)">
+    <!-- REC background -->
+    <rect x="-35" y="-15" width="70" height="30" rx="15" fill="#F44336"/>
+    <rect x="-35" y="-15" width="70" height="30" rx="15" fill="url(#recGradient)"/>
+    <!-- REC dot -->
+    <circle cx="-15" cy="0" r="6" fill="#FFFFFF"/>
+    <!-- REC text -->
+    <text x="0" y="6" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">REC</text>
+  </g>
+
+  <!-- IR LEDs -->
+  <circle cx="280" cy="215" r="6" fill="#4A0000"/>
+  <circle cx="280" cy="265" r="6" fill="#4A0000"/>
+  <circle cx="360" cy="215" r="6" fill="#4A0000"/>
+  <circle cx="360" cy="265" r="6" fill="#4A0000"/>
+
+  <!-- Model/brand label -->
+  <rect x="190" y="225" width="40" height="10" rx="2" fill="#212121" opacity="0.5"/>
+
+  <!-- Processing Gear Overlay -->
+  <g transform="translate(360, 340)">
+    <!-- Gear body -->
+    <circle cx="0" cy="0" r="45" fill="#2196F3"/>
+    <!-- Gear teeth (8 teeth) -->
+    <g fill="#2196F3">
+      <rect x="-7" y="-52" width="14" height="10" rx="2"/>
+      <rect x="-7" y="42" width="14" height="10" rx="2"/>
+      <rect x="42" y="-7" width="10" height="14" rx="2"/>
+      <rect x="-52" y="-7" width="10" height="14" rx="2"/>
+      <rect x="32" y="-39" width="10" height="14" rx="2" transform="rotate(45 360 340)"/>
+      <rect x="-42" y="-39" width="10" height="14" rx="2" transform="rotate(-45 360 340)"/>
+      <rect x="32" y="25" width="10" height="14" rx="2" transform="rotate(135 360 340)"/>
+      <rect x="-42" y="25" width="10" height="14" rx="2" transform="rotate(-135 360 340)"/>
+    </g>
+    <!-- Gear center hole -->
+    <circle cx="0" cy="0" r="16" fill="#FFFFFF"/>
+    <!-- Checkmark for processing -->
+    <path d="M -8 0 L -2 8 L 10 -8" stroke="#2196F3" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#757575;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#424242;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="midGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#9E9E9E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#616161;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="frontGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#616161;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#212121;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="recGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF5252;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D32F2F;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

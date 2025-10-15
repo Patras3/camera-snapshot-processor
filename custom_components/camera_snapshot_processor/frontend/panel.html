@@ -232,37 +232,15 @@
                                     <h4>Overlay Styling</h4>
                                     <div class="form-group">
                                         <label for="overlay_color">Text Color</label>
-                                        <div class="color-picker-enhanced">
-                                            <div class="color-preview" id="overlay_color_preview"></div>
+                                        <div class="color-input-wrapper">
                                             <input type="color" id="overlay_color" value="#ffffff">
-                                            <div class="color-swatches">
-                                                <button type="button" class="color-swatch" data-color="#ffffff" title="White" style="background: #ffffff;"></button>
-                                                <button type="button" class="color-swatch" data-color="#000000" title="Black" style="background: #000000;"></button>
-                                                <button type="button" class="color-swatch" data-color="#ff0000" title="Red" style="background: #ff0000;"></button>
-                                                <button type="button" class="color-swatch" data-color="#00ff00" title="Green" style="background: #00ff00;"></button>
-                                                <button type="button" class="color-swatch" data-color="#0000ff" title="Blue" style="background: #0000ff;"></button>
-                                                <button type="button" class="color-swatch" data-color="#ffff00" title="Yellow" style="background: #ffff00;"></button>
-                                                <button type="button" class="color-swatch" data-color="#ff00ff" title="Magenta" style="background: #ff00ff;"></button>
-                                                <button type="button" class="color-swatch" data-color="#00ffff" title="Cyan" style="background: #00ffff;"></button>
-                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="overlay_background">Background Color</label>
-                                        <div class="color-picker-enhanced">
-                                            <div class="color-preview with-transparency" id="overlay_background_preview"></div>
+                                        <div class="color-input-wrapper">
                                             <input type="text" id="overlay_background" value="#00000000" placeholder="#00000000 (RGBA)">
-                                            <div class="color-swatches">
-                                                <button type="button" class="color-swatch" data-color="#00000000" title="Transparent" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 8px 8px; background-position: 0 0, 4px 4px;"></button>
-                                                <button type="button" class="color-swatch" data-color="#000000cc" title="Black 80%" style="background: #000000cc;"></button>
-                                                <button type="button" class="color-swatch" data-color="#00000099" title="Black 60%" style="background: #00000099;"></button>
-                                                <button type="button" class="color-swatch" data-color="#ffffff99" title="White 60%" style="background: #ffffff99; border: 1px solid #ddd;"></button>
-                                                <button type="button" class="color-swatch" data-color="#ffffffcc" title="White 80%" style="background: #ffffffcc; border: 1px solid #ddd;"></button>
-                                                <button type="button" class="color-swatch" data-color="#667eeacc" title="Purple 80%" style="background: #667eeacc;"></button>
-                                                <button type="button" class="color-swatch" data-color="#4caf50cc" title="Green 80%" style="background: #4caf50cc;"></button>
-                                                <button type="button" class="color-swatch" data-color="#f44336cc" title="Red 80%" style="background: #f44336cc;"></button>
-                                            </div>
                                         </div>
                                         <small class="help-text">Use RGBA hex format for transparency</small>
                                     </div>
@@ -496,6 +474,19 @@
 
     <!-- Custom Notification System -->
     <div id="notification-container" class="notification-container"></div>
+
+    <!-- Color Picker Popup -->
+    <div id="color-picker-popup" class="color-picker-popup" style="display: none;">
+        <div class="color-picker-popup-content">
+            <h4>Quick Colors</h4>
+            <div class="color-swatches-grid" id="color-swatches-grid">
+                <!-- Swatches will be dynamically added here -->
+            </div>
+            <div class="color-picker-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="color-picker-custom">Custom Color...</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="confirmation-modal">

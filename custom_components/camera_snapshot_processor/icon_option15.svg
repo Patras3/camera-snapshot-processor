@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Night vision camera with IR effect (low-light processing) -->
+
+  <!-- Dark background circle (night theme) -->
+  <circle cx="256" cy="256" r="240" fill="#1a1a1a" opacity="0.3"/>
+
+  <!-- Main camera body (darker for night theme) -->
+  <rect x="140" y="180" width="232" height="160" rx="12" fill="#2a2a2a"/>
+  <rect x="150" y="190" width="212" height="140" rx="8" fill="#3a3a3a"/>
+
+  <!-- Camera lens with green night vision tint -->
+  <circle cx="256" cy="260" r="60" fill="#1a4d1a"/>
+  <circle cx="256" cy="260" r="50" fill="#2d6b2d"/>
+  <circle cx="256" cy="260" r="38" fill="#4CAF50"/>
+  <circle cx="256" cy="260" r="28" fill="#2d6b2d"/>
+  <circle cx="256" cy="260" r="18" fill="#00FF00" opacity="0.6"/>
+
+  <!-- Lens glare (greenish) -->
+  <ellipse cx="245" cy="248" rx="10" ry="15" fill="#a5d6a7" opacity="0.7"/>
+  <ellipse cx="252" cy="253" rx="5" ry="8" fill="white" opacity="0.5"/>
+
+  <!-- IR illuminators (infrared LEDs around lens) -->
+  <circle cx="196" cy="220" r="8" fill="#8B0000"/>
+  <circle cx="196" cy="220" r="5" fill="#FF0000" opacity="0.7">
+    <animate attributeName="opacity" values="0.4;0.9;0.4" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="316" cy="220" r="8" fill="#8B0000"/>
+  <circle cx="316" cy="220" r="5" fill="#FF0000" opacity="0.7">
+    <animate attributeName="opacity" values="0.9;0.4;0.9" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="196" cy="300" r="8" fill="#8B0000"/>
+  <circle cx="196" cy="300" r="5" fill="#FF0000" opacity="0.7">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="316" cy="300" r="8" fill="#8B0000"/>
+  <circle cx="316" cy="300" r="5" fill="#FF0000" opacity="0.7">
+    <animate attributeName="opacity" values="0.9;0.6;0.9" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Additional IR LEDs (top and bottom) -->
+  <circle cx="256" cy="200" r="6" fill="#8B0000"/>
+  <circle cx="256" cy="200" r="4" fill="#FF0000" opacity="0.7">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+  <circle cx="256" cy="320" r="6" fill="#8B0000"/>
+  <circle cx="256" cy="320" r="4" fill="#FF0000" opacity="0.7">
+    <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Camera top section -->
+  <rect x="180" y="165" width="152" height="20" rx="4" fill="#3a3a3a"/>
+  <circle cx="210" cy="175" r="5" fill="#4CAF50">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="230" cy="175" r="4" fill="#FF0000" opacity="0.7"/>
+
+  <!-- Night vision indicator label -->
+  <rect x="250" y="168" width="75" height="14" rx="3" fill="#1a4d1a" opacity="0.9"/>
+  <text x="258" y="178" font-family="Arial" font-size="11" fill="#4CAF50" font-weight="bold">NIGHT IR</text>
+
+  <!-- Camera mount -->
+  <rect x="235" y="340" width="42" height="30" fill="#3a3a3a"/>
+  <path d="M 235 370 L 220 400 L 292 400 L 277 370 Z" fill="#2a2a2a"/>
+
+  <!-- Night vision viewport effect (green glow) -->
+  <circle cx="256" cy="260" r="75" fill="none" stroke="#4CAF50" stroke-width="2" opacity="0.3">
+    <animate attributeName="opacity" values="0.1;0.4;0.1" dur="4s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- IR beam indicators (emanating from camera) -->
+  <path d="M 256 260 L 180 160" stroke="#FF0000" stroke-width="1.5" opacity="0.2"/>
+  <path d="M 256 260 L 332 160" stroke="#FF0000" stroke-width="1.5" opacity="0.2"/>
+  <path d="M 256 260 L 150 260" stroke="#FF0000" stroke-width="1.5" opacity="0.15"/>
+  <path d="M 256 260 L 362 260" stroke="#FF0000" stroke-width="1.5" opacity="0.15"/>
+
+  <!-- Night vision scan lines effect -->
+  <g opacity="0.2">
+    <line x1="170" y1="210" x2="342" y2="210" stroke="#4CAF50" stroke-width="1">
+      <animate attributeName="opacity" values="0.1;0.3;0.1" dur="5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="170" y1="240" x2="342" y2="240" stroke="#4CAF50" stroke-width="1">
+      <animate attributeName="opacity" values="0.3;0.1;0.3" dur="5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="170" y1="270" x2="342" y2="270" stroke="#4CAF50" stroke-width="1">
+      <animate attributeName="opacity" values="0.1;0.3;0.1" dur="5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="170" y1="300" x2="342" y2="300" stroke="#4CAF50" stroke-width="1">
+      <animate attributeName="opacity" values="0.3;0.1;0.3" dur="5s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- Moon icon (night indicator) -->
+  <g transform="translate(360, 140)">
+    <circle cx="0" cy="0" r="20" fill="#FFD700" opacity="0.3"/>
+    <circle cx="6" cy="-2" r="18" fill="#1a1a1a" opacity="0.5"/>
+    <circle cx="-3" cy="-3" r="3" fill="#FFD700" opacity="0.4"/>
+    <circle cx="4" cy="5" r="2" fill="#FFD700" opacity="0.4"/>
+  </g>
+
+  <!-- Low-light capability indicator -->
+  <g transform="translate(130, 360)">
+    <rect x="0" y="0" width="55" height="16" rx="8" fill="#1a4d1a" opacity="0.9"/>
+    <text x="27.5" y="11.5" font-family="Arial" font-size="10" fill="#4CAF50" font-weight="bold" text-anchor="middle">0 LUX</text>
+  </g>
+</svg>

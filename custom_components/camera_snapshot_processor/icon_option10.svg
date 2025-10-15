@@ -1,0 +1,99 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Camera Feed Monitor/Screen Showing Processed View -->
+
+  <!-- Monitor Stand -->
+  <ellipse cx="256" cy="440" rx="80" ry="15" fill="#424242"/>
+  <rect x="240" y="380" width="32" height="60" rx="4" fill="#616161"/>
+  <rect x="240" y="380" width="32" height="60" rx="4" fill="url(#standGradient)"/>
+
+  <!-- Monitor Frame -->
+  <rect x="100" y="80" width="312" height="310" rx="16" fill="#212121"/>
+  <rect x="110" y="90" width="292" height="280" rx="8" fill="#000000"/>
+
+  <!-- Monitor Screen (camera feed) -->
+  <rect x="115" y="95" width="282" height="270" rx="4" fill="url(#screenGradient)"/>
+
+  <!-- Camera view content -->
+  <g opacity="0.9">
+    <!-- Background scene -->
+    <rect x="115" y="95" width="282" height="180" fill="#1565C0"/>
+    <rect x="115" y="275" width="282" height="90" fill="#2E7D32"/>
+
+    <!-- Building silhouette -->
+    <rect x="140" y="180" width="60" height="95" fill="#424242"/>
+    <rect x="145" y="190" width="12" height="15" fill="#FFB300"/>
+    <rect x="163" y="190" width="12" height="15" fill="#FFB300"/>
+    <rect x="181" y="190" width="12" height="15" fill="#FFB300"/>
+    <rect x="145" y="220" width="12" height="15" fill="#FFB300"/>
+    <rect x="163" y="220" width="12" height="15" fill="#FFB300"/>
+    <rect x="181" y="220" width="12" height="15" fill="#FFB300"/>
+
+    <!-- Person detected (stick figure) -->
+    <circle cx="280" cy="250" r="12" fill="#FFFFFF"/>
+    <rect x="276" y="262" width="8" height="30" rx="2" fill="#FFFFFF"/>
+    <rect x="268" y="268" width="24" height="6" rx="2" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Processing Overlays -->
+  <!-- Timestamp overlay -->
+  <rect x="125" y="105" width="120" height="26" rx="4" fill="#000000" opacity="0.7"/>
+  <text x="135" y="123" font-family="monospace" font-size="16" fill="#FFFFFF" font-weight="bold">2024-10-14</text>
+
+  <!-- Detection Box -->
+  <rect x="260" y="230" width="50" height="75" fill="none" stroke="#FF5252" stroke-width="3" stroke-dasharray="5,5"/>
+  <rect x="260" y="230" width="50" height="18" fill="#FF5252" opacity="0.9"/>
+  <text x="265" y="243" font-family="Arial, sans-serif" font-size="12" fill="#FFFFFF" font-weight="bold">PERSON</text>
+
+  <!-- Status indicators overlay -->
+  <g transform="translate(360, 110)">
+    <!-- Recording indicator -->
+    <circle cx="0" cy="0" r="8" fill="#F44336"/>
+    <circle cx="0" cy="0" r="6" fill="#FF5252"/>
+  </g>
+
+  <!-- Processing badge -->
+  <g transform="translate(360, 340)">
+    <circle cx="0" cy="0" r="45" fill="#4CAF50"/>
+    <circle cx="0" cy="0" r="43" fill="url(#badgeGradient)"/>
+    <!-- Checkmark -->
+    <path d="M -12 0 L -4 12 L 14 -12" stroke="#FFFFFF" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Settings gear icon -->
+  <g transform="translate(152, 340)">
+    <circle cx="0" cy="0" r="45" fill="#2196F3"/>
+    <!-- Gear teeth (8 teeth) -->
+    <g fill="#2196F3">
+      <rect x="-6" y="-50" width="12" height="9" rx="2"/>
+      <rect x="-6" y="41" width="12" height="9" rx="2"/>
+      <rect x="41" y="-6" width="9" height="12" rx="2"/>
+      <rect x="-50" y="-6" width="9" height="12" rx="2"/>
+      <rect x="30" y="-37" width="9" height="12" rx="2" transform="rotate(45 152 340)"/>
+      <rect x="-39" y="-37" width="9" height="12" rx="2" transform="rotate(-45 152 340)"/>
+      <rect x="30" y="25" width="9" height="12" rx="2" transform="rotate(135 152 340)"/>
+      <rect x="-39" y="25" width="9" height="12" rx="2" transform="rotate(-135 152 340)"/>
+    </g>
+    <!-- Center -->
+    <circle cx="0" cy="0" r="16" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Monitor power LED -->
+  <circle cx="256" cy="378" r="4" fill="#4CAF50"/>
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="standGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#757575;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#424242;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="screenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D47A1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1565C0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1B5E20;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="badgeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#66BB6A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388E3C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

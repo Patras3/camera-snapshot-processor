@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#E3F2FD"/>
+
+  <!-- Camera body -->
+  <path d="M 140 210 L 180 210 L 195 190 L 317 190 L 332 210 L 372 210 Q 392 210 392 230 L 392 370 Q 392 390 372 390 L 140 390 Q 120 390 120 370 L 120 230 Q 120 210 140 210 Z" fill="#1976D2"/>
+
+  <!-- Camera lens (prominent) -->
+  <circle cx="256" cy="300" r="70" fill="#424242"/>
+  <circle cx="256" cy="300" r="58" fill="#616161"/>
+  <circle cx="256" cy="300" r="45" fill="#424242"/>
+  <circle cx="256" cy="300" r="32" fill="#757575"/>
+
+  <!-- Lens reflection -->
+  <ellipse cx="238" cy="283" rx="16" ry="22" fill="#90CAF9" opacity="0.5"/>
+
+  <!-- Flash -->
+  <rect x="325" y="235" width="28" height="20" rx="3" fill="#64B5F6"/>
+
+  <!-- Sparkles / Enhancement stars -->
+  <!-- Large sparkle - top left -->
+  <g fill="#FF9800">
+    <path d="M 140 120 L 145 135 L 160 140 L 145 145 L 140 160 L 135 145 L 120 140 L 135 135 Z"/>
+    <circle cx="140" cy="140" r="4" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Medium sparkle - top right -->
+  <g fill="#FF9800">
+    <path d="M 380 140 L 384 150 L 394 154 L 384 158 L 380 168 L 376 158 L 366 154 L 376 150 Z"/>
+    <circle cx="380" cy="154" r="3" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Small sparkle - upper right -->
+  <g fill="#FFC107">
+    <path d="M 340 100 L 342 107 L 349 109 L 342 111 L 340 118 L 338 111 L 331 109 L 338 107 Z"/>
+  </g>
+
+  <!-- Large sparkle - bottom right -->
+  <g fill="#FF9800">
+    <path d="M 390 360 L 395 375 L 410 380 L 395 385 L 390 400 L 385 385 L 370 380 L 385 375 Z"/>
+    <circle cx="390" cy="380" r="4" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Medium sparkle - left side -->
+  <g fill="#FF9800">
+    <path d="M 100 280 L 104 290 L 114 294 L 104 298 L 100 308 L 96 298 L 86 294 L 96 290 Z"/>
+    <circle cx="100" cy="294" r="3" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Small sparkle - top center -->
+  <g fill="#FFC107">
+    <path d="M 240 90 L 242 97 L 249 99 L 242 101 L 240 108 L 238 101 L 231 99 L 238 97 Z"/>
+  </g>
+
+  <!-- Small sparkle - bottom left -->
+  <g fill="#FFC107">
+    <path d="M 130 420 L 132 427 L 139 429 L 132 431 L 130 438 L 128 431 L 121 429 L 128 427 Z"/>
+  </g>
+
+  <!-- Tiny sparkles around lens -->
+  <g fill="#FFD54F" opacity="0.8">
+    <circle cx="190" cy="250" r="3"/>
+    <circle cx="322" cy="260" r="3"/>
+    <circle cx="300" cy="350" r="3"/>
+    <circle cx="205" cy="340" r="3"/>
+  </g>
+
+  <!-- Glow effect around lens -->
+  <circle cx="256" cy="300" r="85" fill="none" stroke="#FF9800" stroke-width="2" opacity="0.3"/>
+  <circle cx="256" cy="300" r="92" fill="none" stroke="#FFC107" stroke-width="1" opacity="0.2"/>
+</svg>
