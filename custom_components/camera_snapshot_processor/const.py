@@ -30,6 +30,7 @@ CONF_TEXT_FONT_SIZE = "text_font_size"
 CONF_STATE_ICON_FONT_SIZE = "state_icon_font_size"
 CONF_OVERLAY_COLOR = "overlay_color"
 CONF_OVERLAY_BACKGROUND = "overlay_background"
+CONF_STATE_ICON_BACKGROUND = "state_icon_background"
 
 # State icons configuration (multiple icons supported)
 CONF_STATE_ICONS = "state_icons"
@@ -56,6 +57,7 @@ DEFAULT_TEXT_FONT_SIZE = 20
 DEFAULT_STATE_ICON_FONT_SIZE = 18
 DEFAULT_OVERLAY_COLOR = [255, 255, 255]  # White - RGB list for ColorRGBSelector
 DEFAULT_OVERLAY_BACKGROUND = "#00000000"
+DEFAULT_STATE_ICON_BACKGROUND = "#00000000"  # Transparent by default
 DEFAULT_RESIZE_ALGORITHM = "lanczos"  # lanczos (best quality) or bilinear (faster)
 
 # Preview

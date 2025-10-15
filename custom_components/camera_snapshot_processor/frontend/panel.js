@@ -451,6 +451,7 @@
 
     let overlayColorPickr = null;
     let overlayBackgroundPickr = null;
+    let stateIconBackgroundPickr = null;
 
     function setupColorPickers() {
         // Text Color Picker (RGB only)
@@ -510,6 +511,37 @@
             if (color) {
                 document.getElementById('overlay_background').value = color.toHEXA().toString();
                 overlayBackgroundPickr.hide();
+                schedulePreviewUpdate();
+            }
+        });
+
+        // State Icon Background Color Picker (RGBA with transparency)
+        stateIconBackgroundPickr = Pickr.create({
+            el: '#state_icon_background_picker',
+            theme: 'nano',
+            default: '#00000000',
+            swatches: [
+                'rgba(0,0,0,0)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.6)',
+                'rgba(255,255,255,0.6)', 'rgba(255,255,255,0.8)',
+                'rgba(102,126,234,0.8)', 'rgba(76,175,80,0.8)', 'rgba(244,67,54,0.8)'
+            ],
+            components: {
+                preview: true,
+                opacity: true,
+                hue: true,
+                interaction: {
+                    hex: true,
+                    rgba: true,
+                    input: true,
+                    save: true
+                }
+            }
+        });
+
+        stateIconBackgroundPickr.on('save', (color) => {
+            if (color) {
+                document.getElementById('state_icon_background').value = color.toHEXA().toString();
+                stateIconBackgroundPickr.hide();
                 schedulePreviewUpdate();
             }
         });
@@ -813,6 +845,13 @@
             overlayBackgroundPickr.setColor(bgColor);
         }
 
+        // State icon background
+        const stateIconBgColor = config.state_icon_background || '#00000000';
+        setInputValue('state_icon_background', stateIconBgColor);
+        if (stateIconBackgroundPickr) {
+            stateIconBackgroundPickr.setColor(stateIconBgColor);
+        }
+
         // Stream
         setInputValue('rtsp_url', config.rtsp_url || '');
 
@@ -859,6 +898,7 @@
             text_font_size: parseInt(document.getElementById('text_font_size').value),
             overlay_color: hexToRgb(document.getElementById('overlay_color').value),
             overlay_background: document.getElementById('overlay_background').value,
+            state_icon_background: document.getElementById('state_icon_background').value,
             rtsp_url: document.getElementById('rtsp_url').value,
             state_icons: stateIcons,
             source_width: currentConfig.source_width,

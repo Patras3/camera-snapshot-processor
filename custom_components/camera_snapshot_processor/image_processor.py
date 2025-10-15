@@ -29,6 +29,7 @@ from .const import (
     CONF_OVERLAY_FONT_SIZE,
     CONF_QUALITY,
     CONF_RESIZE_ALGORITHM,
+    CONF_STATE_ICON_BACKGROUND,
     CONF_STATE_ICONS,
     CONF_TEXT_ENABLED,
     CONF_TEXT_FONT_SIZE,
@@ -40,6 +41,7 @@ from .const import (
     DEFAULT_OVERLAY_COLOR,
     DEFAULT_QUALITY,
     DEFAULT_RESIZE_ALGORITHM,
+    DEFAULT_STATE_ICON_BACKGROUND,
     DEFAULT_STATE_ICON_FONT_SIZE,
     DEFAULT_TEXT_FONT_SIZE,
     POSITION_BOTTOM_LEFT,
@@ -664,6 +666,7 @@ class ImageProcessor:
         parts: list[dict[str, Any]],
         position: str,
         offset: int = 0,
+        use_state_icon_background: bool = True,
     ) -> None:
         """Draw text with multiple colors and fonts.
 
@@ -672,7 +675,15 @@ class ImageProcessor:
         if not parts:
             return
 
-        bg_color = self.config.get(CONF_OVERLAY_BACKGROUND, DEFAULT_OVERLAY_BACKGROUND)
+        # Use state icon background for state icons, overlay background for text overlays
+        if use_state_icon_background:
+            bg_color = self.config.get(
+                CONF_STATE_ICON_BACKGROUND, DEFAULT_STATE_ICON_BACKGROUND
+            )
+        else:
+            bg_color = self.config.get(
+                CONF_OVERLAY_BACKGROUND, DEFAULT_OVERLAY_BACKGROUND
+            )
         bg_color = self._normalize_color(bg_color)
         background_color = self._hex_to_rgba(bg_color)
 
