@@ -503,12 +503,9 @@
             }
         });
 
-        // Also save when picker is hidden to ensure button updates
+        // Update button preview when picker is hidden
         overlayColorPickr.on('hide', () => {
-            const currentColor = overlayColorPickr.getColor();
-            if (currentColor) {
-                document.getElementById('overlay_color').value = currentColor.toHEXA().toString();
-            }
+            overlayColorPickr.applyColor(true);
         });
 
         // Background Color Picker (no opacity control - use Clear button for transparency)
@@ -537,12 +534,9 @@
             }
         });
 
-        // Also save when picker is hidden to ensure button updates
+        // Update button preview when picker is hidden
         overlayBackgroundPickr.on('hide', () => {
-            const currentColor = overlayBackgroundPickr.getColor();
-            if (currentColor) {
-                document.getElementById('overlay_background').value = currentColor.toHEXA().toString();
-            }
+            overlayBackgroundPickr.applyColor(true);
         });
 
         // State Icon Background Color Picker (no opacity control - use Clear button for transparency)
@@ -571,12 +565,9 @@
             }
         });
 
-        // Also save when picker is hidden to ensure button updates
+        // Update button preview when picker is hidden
         stateIconBackgroundPickr.on('hide', () => {
-            const currentColor = stateIconBackgroundPickr.getColor();
-            if (currentColor) {
-                document.getElementById('state_icon_background').value = currentColor.toHEXA().toString();
-            }
+            stateIconBackgroundPickr.applyColor(true);
         });
 
         // Clear background buttons

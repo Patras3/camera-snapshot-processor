@@ -710,12 +710,9 @@
                 }
             });
 
-            // Also save when picker is hidden to ensure button updates
+            // Update button preview when picker is hidden
             iconColorPickr.on('hide', () => {
-                const currentColor = iconColorPickr.getColor();
-                if (currentColor) {
-                    iconColorInput.value = currentColor.toHEXA().toString();
-                }
+                iconColorPickr.applyColor(true);
             });
 
             // Initialize Pickr for text color
@@ -744,12 +741,9 @@
                 }
             });
 
-            // Also save when picker is hidden to ensure button updates
+            // Update button preview when picker is hidden
             textColorPickr.on('hide', () => {
-                const currentColor = textColorPickr.getColor();
-                if (currentColor) {
-                    textColorInput.value = currentColor.toHEXA().toString();
-                }
+                textColorPickr.applyColor(true);
             });
         }
 
