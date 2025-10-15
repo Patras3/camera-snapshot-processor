@@ -897,7 +897,7 @@
 
             closeEntityNameModal();
             updateUI();
-            showSuccess(`Entity renamed to camera.${newName}`);
+            showSuccess(`Entity ID will be updated to camera.${newName} - integration is reloading...`);
         } catch (error) {
             console.error('Failed to save entity name:', error);
             errorEl.textContent = `Error: ${error.message}`;

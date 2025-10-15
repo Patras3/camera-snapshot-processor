@@ -52,6 +52,40 @@ async def async_setup_entry(
             )
             entity_registry.async_remove(entity_entry.entity_id)
 
+    # Update entity IDs for existing entities if the name changed
+    for camera_id, config in cameras_config.items():
+        unique_id = f"{DOMAIN}_{camera_id}"
+
+        # Get the desired entity name
+        if CONF_ENTITY_NAME in config and config[CONF_ENTITY_NAME]:
+            entity_name = config[CONF_ENTITY_NAME]
+        else:
+            source_name = config[CONF_SOURCE_CAMERA].replace("camera.", "")
+            entity_name = f"{source_name}_processed"
+
+        desired_entity_id = f"camera.{entity_name}"
+
+        # Check if this entity already exists
+        entity_entry = entity_registry.async_get_entity_id("camera", DOMAIN, unique_id)
+        if entity_entry and entity_entry != desired_entity_id:
+            # Entity exists but has wrong ID - update it
+            _LOGGER.info(
+                "Updating entity ID from %s to %s",
+                entity_entry,
+                desired_entity_id,
+            )
+            try:
+                entity_registry.async_update_entity(
+                    entity_entry, new_entity_id=desired_entity_id
+                )
+            except Exception as err:
+                _LOGGER.error(
+                    "Failed to update entity ID from %s to %s: %s",
+                    entity_entry,
+                    desired_entity_id,
+                    err,
+                )
+
     # Create camera entities for all configured cameras
     cameras = []
     for camera_id, config in cameras_config.items():
@@ -121,27 +155,40 @@ class SnapshotProcessorCamera(Camera):
         # Get updated config from entry
         cameras_config = self._config_entry.data.get("cameras", {})
         if self._camera_id in cameras_config:
-            self._config = cameras_config[self._camera_id]
+            new_config = cameras_config[self._camera_id]
+
+            # Check if entity name changed - if so, trigger reload
+            old_name = (
+                self._config.get(CONF_ENTITY_NAME)
+                if CONF_ENTITY_NAME in self._config
+                else None
+            )
+            new_name = (
+                new_config.get(CONF_ENTITY_NAME)
+                if CONF_ENTITY_NAME in new_config
+                else None
+            )
+
+            if old_name != new_name:
+                # Entity name changed - reload is needed to update entity ID
+                _LOGGER.info(
+                    "Camera %s: Entity name changed from %s to %s - reload required",
+                    self._camera_id,
+                    old_name,
+                    new_name,
+                )
+                # Trigger entry reload
+                self.hass.async_create_task(
+                    self.hass.config_entries.async_reload(self._config_entry.entry_id)
+                )
+                return
+
+            # Update config for other changes
+            self._config = new_config
             self._source_camera = self._config[CONF_SOURCE_CAMERA]
             rtsp_url = self._config.get(CONF_RTSP_URL, "")
             self._rtsp_url = rtsp_url.strip() if rtsp_url else None
             self._image_processor = ImageProcessor(self.hass, self._config)
-
-            # Update entity name if changed
-            if CONF_ENTITY_NAME in self._config and self._config[CONF_ENTITY_NAME]:
-                new_name = self._config[CONF_ENTITY_NAME]
-            else:
-                # Default: source_name_processed
-                source_name = self._source_camera.replace("camera.", "")
-                new_name = f"{source_name}_processed"
-
-            if self._attr_name != new_name:
-                self._attr_name = new_name
-                _LOGGER.info(
-                    "Camera %s: Entity name updated to %s",
-                    self._camera_id,
-                    new_name,
-                )
 
             self.async_write_ha_state()
 
