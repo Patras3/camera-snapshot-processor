@@ -699,18 +699,14 @@
                     opacity: false,
                     hue: true,
                     interaction: {
-                        hex: true,
-                        rgba: false,
-                        input: true,
-                        save: true
+                        input: true
                     }
                 }
             });
 
-            iconColorPickr.on('save', (color) => {
+            iconColorPickr.on('change', (color) => {
                 if (color) {
                     iconColorInput.value = color.toHEXA().toString();
-                    iconColorPickr.hide();
                 }
             });
 
@@ -729,18 +725,14 @@
                     opacity: false,
                     hue: true,
                     interaction: {
-                        hex: true,
-                        rgba: false,
-                        input: true,
-                        save: true
+                        input: true
                     }
                 }
             });
 
-            textColorPickr.on('save', (color) => {
+            textColorPickr.on('change', (color) => {
                 if (color) {
                     textColorInput.value = color.toHEXA().toString();
-                    textColorPickr.hide();
                 }
             });
         }

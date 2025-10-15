@@ -491,18 +491,14 @@
                 opacity: false,
                 hue: true,
                 interaction: {
-                    hex: true,
-                    rgba: false,
-                    input: true,
-                    save: true
+                    input: true
                 }
             }
         });
 
-        overlayColorPickr.on('save', (color) => {
+        overlayColorPickr.on('change', (color) => {
             if (color) {
                 document.getElementById('overlay_color').value = color.toHEXA().toString();
-                overlayColorPickr.hide();
                 schedulePreviewUpdate();
             }
         });
@@ -521,16 +517,14 @@
                 opacity: false,
                 hue: true,
                 interaction: {
-                    input: true,
-                    save: true
+                    input: true
                 }
             }
         });
 
-        overlayBackgroundPickr.on('save', (color) => {
+        overlayBackgroundPickr.on('change', (color) => {
             if (color) {
                 document.getElementById('overlay_background').value = color.toHEXA().toString();
-                overlayBackgroundPickr.hide();
                 schedulePreviewUpdate();
             }
         });
@@ -549,16 +543,14 @@
                 opacity: false,
                 hue: true,
                 interaction: {
-                    input: true,
-                    save: true
+                    input: true
                 }
             }
         });
 
-        stateIconBackgroundPickr.on('save', (color) => {
+        stateIconBackgroundPickr.on('change', (color) => {
             if (color) {
                 document.getElementById('state_icon_background').value = color.toHEXA().toString();
-                stateIconBackgroundPickr.hide();
                 schedulePreviewUpdate();
             }
         });
