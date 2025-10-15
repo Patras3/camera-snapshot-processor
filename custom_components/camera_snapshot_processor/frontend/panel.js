@@ -484,23 +484,21 @@
             }
         });
 
-        // Background Color Picker (RGBA with transparency)
+        // Background Color Picker (no opacity control - use Clear button for transparency)
         overlayBackgroundPickr = Pickr.create({
             el: '#overlay_background_picker',
             theme: 'nano',
-            default: '#00000000',
+            default: '#000000',
             swatches: [
-                'rgba(0,0,0,0)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.6)',
-                'rgba(255,255,255,0.6)', 'rgba(255,255,255,0.8)',
-                'rgba(102,126,234,0.8)', 'rgba(76,175,80,0.8)', 'rgba(244,67,54,0.8)'
+                '#000000', '#ffffff', '#333333', '#666666',
+                '#667eea', '#4caf50', '#ffeb3b', '#ff9800', '#f44336'
             ],
             components: {
                 preview: true,
-                opacity: true,
+                opacity: false,
                 hue: true,
                 interaction: {
                     hex: true,
-                    rgba: true,
                     input: true,
                     save: true
                 }
@@ -515,23 +513,21 @@
             }
         });
 
-        // State Icon Background Color Picker (RGBA with transparency)
+        // State Icon Background Color Picker (no opacity control - use Clear button for transparency)
         stateIconBackgroundPickr = Pickr.create({
             el: '#state_icon_background_picker',
             theme: 'nano',
-            default: '#00000000',
+            default: '#000000',
             swatches: [
-                'rgba(0,0,0,0)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.6)',
-                'rgba(255,255,255,0.6)', 'rgba(255,255,255,0.8)',
-                'rgba(102,126,234,0.8)', 'rgba(76,175,80,0.8)', 'rgba(244,67,54,0.8)'
+                '#000000', '#ffffff', '#333333', '#666666',
+                '#667eea', '#4caf50', '#ffeb3b', '#ff9800', '#f44336'
             ],
             components: {
                 preview: true,
-                opacity: true,
+                opacity: false,
                 hue: true,
                 interaction: {
                     hex: true,
-                    rgba: true,
                     input: true,
                     save: true
                 }
@@ -544,6 +540,23 @@
                 stateIconBackgroundPickr.hide();
                 schedulePreviewUpdate();
             }
+        });
+
+        // Clear background buttons
+        document.getElementById('clear_overlay_background').addEventListener('click', () => {
+            document.getElementById('overlay_background').value = '#00000000';
+            if (overlayBackgroundPickr) {
+                overlayBackgroundPickr.setColor('#00000000');
+            }
+            schedulePreviewUpdate();
+        });
+
+        document.getElementById('clear_state_icon_background').addEventListener('click', () => {
+            document.getElementById('state_icon_background').value = '#00000000';
+            if (stateIconBackgroundPickr) {
+                stateIconBackgroundPickr.setColor('#00000000');
+            }
+            schedulePreviewUpdate();
         });
     }
 

@@ -239,9 +239,12 @@
 
                                     <div class="form-group">
                                         <label for="overlay_background">Background Color</label>
-                                        <div class="pickr-container" id="overlay_background_picker"></div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <div class="pickr-container" id="overlay_background_picker"></div>
+                                            <button type="button" class="btn btn-secondary btn-sm" id="clear_overlay_background">Clear</button>
+                                        </div>
                                         <input type="hidden" id="overlay_background" value="#00000000">
-                                        <small class="help-text">Supports transparency (RGBA)</small>
+                                        <small class="help-text">Click "Clear" for no background</small>
                                     </div>
                                 </div>
                             </div>
@@ -262,9 +265,12 @@
                                     <h4>State Icon Background</h4>
                                     <div class="form-group">
                                         <label for="state_icon_background">Background Color</label>
-                                        <div class="pickr-container" id="state_icon_background_picker"></div>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <div class="pickr-container" id="state_icon_background_picker"></div>
+                                            <button type="button" class="btn btn-secondary btn-sm" id="clear_state_icon_background">Clear</button>
+                                        </div>
                                         <input type="hidden" id="state_icon_background" value="#00000000">
-                                        <small class="help-text">Background color for all state icons (supports transparency RGBA)</small>
+                                        <small class="help-text">Background color for all state icons. Click "Clear" for no background</small>
                                     </div>
                                 </div>
                             </div>
