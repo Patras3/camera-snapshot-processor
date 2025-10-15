@@ -305,11 +305,30 @@
         document.getElementById('cancel-add-camera').addEventListener('click', closeAddCameraModal);
         document.getElementById('cancel-state-icon').addEventListener('click', closeStateIconModal);
 
+        // Entity name editor
+        document.getElementById('entity-name-btn').addEventListener('click', openEntityNameModal);
+        document.getElementById('cancel-entity-name').addEventListener('click', closeEntityNameModal);
+        document.getElementById('save-entity-name').addEventListener('click', saveEntityName);
+
+        // Entity name input validation
+        const entityNameInput = document.getElementById('entity-name-input');
+        entityNameInput.addEventListener('input', (e) => {
+            // Convert to lowercase and filter invalid characters
+            let value = e.target.value.toLowerCase();
+            value = value.replace(/[^a-z0-9_]/g, '');
+            e.target.value = value;
+
+            // Clear error message when user types
+            const errorEl = document.getElementById('entity-name-error');
+            errorEl.style.display = 'none';
+        });
+
         // Close modals with X button
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 closeAddCameraModal();
                 closeStateIconModal();
+                closeEntityNameModal();
             });
         });
 
@@ -319,6 +338,9 @@
         });
         document.getElementById('state-icon-modal').addEventListener('click', (e) => {
             if (e.target.id === 'state-icon-modal') closeStateIconModal();
+        });
+        document.getElementById('entity-name-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'entity-name-modal') closeEntityNameModal();
         });
 
         // Tab switching
@@ -787,6 +809,103 @@
             const sourceName = config.source_camera.replace('camera.', '').replace(/_/g, ' ');
             document.getElementById('camera-title').textContent = sourceName;
             document.getElementById('camera-source').textContent = `Source: ${config.source_camera}`;
+
+            // Update entity name button
+            const entityName = config.entity_name || `${config.source_camera.replace('camera.', '')}_processed`;
+            const entityNameBtn = document.getElementById('entity-name-btn');
+            const entityNameSection = document.getElementById('entity-name-section');
+            entityNameBtn.textContent = `camera.${entityName}`;
+            entityNameSection.style.display = 'block';
+        } else {
+            document.getElementById('entity-name-section').style.display = 'none';
+        }
+    }
+
+    // ==================== Entity Name Editor ====================
+
+    function openEntityNameModal() {
+        if (!currentCameraId || !cameras[currentCameraId]) {
+            return;
+        }
+
+        const config = cameras[currentCameraId];
+        const currentEntityName = config.entity_name || `${config.source_camera.replace('camera.', '')}_processed`;
+
+        const input = document.getElementById('entity-name-input');
+        input.value = currentEntityName;
+
+        // Clear any previous errors
+        const errorEl = document.getElementById('entity-name-error');
+        errorEl.style.display = 'none';
+
+        document.getElementById('entity-name-modal').classList.add('active');
+
+        // Focus input after a short delay to ensure modal is visible
+        setTimeout(() => input.focus(), 100);
+    }
+
+    function closeEntityNameModal() {
+        document.getElementById('entity-name-modal').classList.remove('active');
+    }
+
+    async function saveEntityName() {
+        if (!currentCameraId) return;
+
+        const input = document.getElementById('entity-name-input');
+        const newName = input.value.trim();
+        const errorEl = document.getElementById('entity-name-error');
+
+        // Validation
+        if (!newName) {
+            errorEl.textContent = 'Entity name cannot be empty';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        if (!/^[a-z0-9_]+$/.test(newName)) {
+            errorEl.textContent = 'Only lowercase letters, numbers, and underscores are allowed';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        const saveBtn = document.getElementById('save-entity-name');
+        const originalBtnText = saveBtn.textContent;
+
+        try {
+            // Disable button and show loading state
+            saveBtn.disabled = true;
+            saveBtn.textContent = '💾 Saving...';
+
+            // Update config
+            currentConfig.entity_name = newName;
+
+            // Save to backend
+            const response = await authenticatedFetch(`/api/camera_snapshot_processor/cameras/${currentCameraId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ config: currentConfig })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to save entity name');
+            }
+
+            // Update local state
+            cameras[currentCameraId] = currentConfig;
+
+            closeEntityNameModal();
+            updateUI();
+            showSuccess(`Entity renamed to camera.${newName}`);
+        } catch (error) {
+            console.error('Failed to save entity name:', error);
+            errorEl.textContent = `Error: ${error.message}`;
+            errorEl.style.display = 'block';
+        } finally {
+            // Reset button state
+            saveBtn.disabled = false;
+            saveBtn.textContent = originalBtnText;
         }
     }
 
@@ -794,7 +913,6 @@
 
     function populateForm(config) {
         // Dimensions
-        setInputValue('entity_name_suffix', config.entity_name_suffix || 'processed');
         setInputValue('width', config.width || 1920);
         setInputValue('height', config.height || 1080);
         setInputValue('keep_ratio', config.keep_ratio !== false);
@@ -891,7 +1009,7 @@
 
         return {
             source_camera: currentConfig.source_camera,
-            entity_name_suffix: document.getElementById('entity_name_suffix').value || 'processed',
+            entity_name: currentConfig.entity_name,  // Keep the entity name from config
             width: parseInt(document.getElementById('width').value),
             height: parseInt(document.getElementById('height').value),
             keep_ratio: document.getElementById('keep_ratio').checked,

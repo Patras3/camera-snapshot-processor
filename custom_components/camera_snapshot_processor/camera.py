@@ -12,13 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import (
-    CONF_ENTITY_NAME_SUFFIX,
-    CONF_RTSP_URL,
-    CONF_SOURCE_CAMERA,
-    DEFAULT_ENTITY_NAME_SUFFIX,
-    DOMAIN,
-)
+from .const import CONF_ENTITY_NAME, CONF_RTSP_URL, CONF_SOURCE_CAMERA, DOMAIN
 from .image_processor import ImageProcessor
 
 _LOGGER = logging.getLogger(__name__)
@@ -99,17 +93,21 @@ class SnapshotProcessorCamera(Camera):
         self._render_count = 0
         self._concurrent_requests = 0
 
-        # Generate unique ID and name with configurable suffix
-        source_name = self._source_camera.replace("camera.", "")
-        name_suffix = config.get(CONF_ENTITY_NAME_SUFFIX, DEFAULT_ENTITY_NAME_SUFFIX)
+        # Generate unique ID and entity name
+        # If entity_name is provided, use it; otherwise generate from source camera
+        if CONF_ENTITY_NAME in config and config[CONF_ENTITY_NAME]:
+            entity_name = config[CONF_ENTITY_NAME]
+        else:
+            # Default: source_name_processed
+            source_name = self._source_camera.replace("camera.", "")
+            entity_name = f"{source_name}_processed"
 
-        # Build the entity name: source_name + _ + suffix
         self._attr_unique_id = f"{DOMAIN}_{camera_id}"
-        self._attr_name = f"{source_name}_{name_suffix}"
+        self._attr_name = entity_name  # Name without camera. prefix
 
         self._attr_device_info = {
             "identifiers": {(DOMAIN, self._attr_unique_id)},
-            "name": f"{source_name.replace('_', ' ').title()} {name_suffix.title()}",
+            "name": f"{entity_name.replace('_', ' ').title()}",
             "manufacturer": "Camera Snapshot Processor",
             "model": "Processed Camera",
         }
@@ -129,12 +127,13 @@ class SnapshotProcessorCamera(Camera):
             self._rtsp_url = rtsp_url.strip() if rtsp_url else None
             self._image_processor = ImageProcessor(self.hass, self._config)
 
-            # Update entity name if suffix changed
-            source_name = self._source_camera.replace("camera.", "")
-            name_suffix = self._config.get(
-                CONF_ENTITY_NAME_SUFFIX, DEFAULT_ENTITY_NAME_SUFFIX
-            )
-            new_name = f"{source_name}_{name_suffix}"
+            # Update entity name if changed
+            if CONF_ENTITY_NAME in self._config and self._config[CONF_ENTITY_NAME]:
+                new_name = self._config[CONF_ENTITY_NAME]
+            else:
+                # Default: source_name_processed
+                source_name = self._source_camera.replace("camera.", "")
+                new_name = f"{source_name}_processed"
 
             if self._attr_name != new_name:
                 self._attr_name = new_name
