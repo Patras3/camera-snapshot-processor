@@ -503,6 +503,14 @@
             }
         });
 
+        // Also save when picker is hidden to ensure button updates
+        overlayColorPickr.on('hide', () => {
+            const currentColor = overlayColorPickr.getColor();
+            if (currentColor) {
+                document.getElementById('overlay_color').value = currentColor.toHEXA().toString();
+            }
+        });
+
         // Background Color Picker (no opacity control - use Clear button for transparency)
         overlayBackgroundPickr = Pickr.create({
             el: '#overlay_background_picker',
@@ -529,6 +537,14 @@
             }
         });
 
+        // Also save when picker is hidden to ensure button updates
+        overlayBackgroundPickr.on('hide', () => {
+            const currentColor = overlayBackgroundPickr.getColor();
+            if (currentColor) {
+                document.getElementById('overlay_background').value = currentColor.toHEXA().toString();
+            }
+        });
+
         // State Icon Background Color Picker (no opacity control - use Clear button for transparency)
         stateIconBackgroundPickr = Pickr.create({
             el: '#state_icon_background_picker',
@@ -552,6 +568,14 @@
             if (color) {
                 document.getElementById('state_icon_background').value = color.toHEXA().toString();
                 schedulePreviewUpdate();
+            }
+        });
+
+        // Also save when picker is hidden to ensure button updates
+        stateIconBackgroundPickr.on('hide', () => {
+            const currentColor = stateIconBackgroundPickr.getColor();
+            if (currentColor) {
+                document.getElementById('state_icon_background').value = currentColor.toHEXA().toString();
             }
         });
 

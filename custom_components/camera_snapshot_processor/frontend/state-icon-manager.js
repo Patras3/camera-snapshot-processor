@@ -710,6 +710,14 @@
                 }
             });
 
+            // Also save when picker is hidden to ensure button updates
+            iconColorPickr.on('hide', () => {
+                const currentColor = iconColorPickr.getColor();
+                if (currentColor) {
+                    iconColorInput.value = currentColor.toHEXA().toString();
+                }
+            });
+
             // Initialize Pickr for text color
             const textColorInput = body.querySelector('.rule-text-color');
             const textColorPickr = Pickr.create({
@@ -733,6 +741,14 @@
             textColorPickr.on('change', (color) => {
                 if (color) {
                     textColorInput.value = color.toHEXA().toString();
+                }
+            });
+
+            // Also save when picker is hidden to ensure button updates
+            textColorPickr.on('hide', () => {
+                const currentColor = textColorPickr.getColor();
+                if (currentColor) {
+                    textColorInput.value = currentColor.toHEXA().toString();
                 }
             });
         }
