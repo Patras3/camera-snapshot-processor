@@ -442,6 +442,7 @@
         });
 
         // Action buttons
+        document.getElementById('reload-data-btn').addEventListener('click', reloadData);
         document.getElementById('save-config-btn').addEventListener('click', saveConfig);
         document.getElementById('refresh-preview-btn').addEventListener('click', refreshPreview);
         document.getElementById('delete-camera-btn').addEventListener('click', deleteCamera);
@@ -602,6 +603,40 @@
         } catch (error) {
             console.error('Failed to load cameras:', error);
             showError('Failed to load cameras: ' + error.message);
+        }
+    }
+
+    async function reloadData() {
+        const reloadBtn = document.getElementById('reload-data-btn');
+        const originalBtnText = reloadBtn.textContent;
+
+        try {
+            // Disable button and show loading state
+            reloadBtn.disabled = true;
+            reloadBtn.textContent = '🔄 Reloading...';
+
+            // Remember current camera ID to re-select it
+            const currentId = currentCameraId;
+
+            // Reload cameras from HA
+            await loadCameras();
+
+            // Re-select the same camera if it still exists
+            if (currentId && cameras[currentId]) {
+                await selectCamera(currentId);
+            } else if (Object.keys(cameras).length > 0) {
+                // If current camera was deleted, select first available
+                await selectCamera(Object.keys(cameras)[0]);
+            }
+
+            showSuccess('Data reloaded from Home Assistant');
+        } catch (error) {
+            console.error('Failed to reload data:', error);
+            showError('Failed to reload data: ' + error.message);
+        } finally {
+            // Reset button state
+            reloadBtn.disabled = false;
+            reloadBtn.textContent = originalBtnText;
         }
     }
 
@@ -916,7 +951,10 @@
             cameras[currentCameraId] = currentConfig;
 
             closeEntityNameModal();
-            updateUI();
+
+            // Force reload to get actual entity ID from HA
+            await reloadData();
+
             showSuccess(`Entity ID updated to camera.${newName}`);
         } catch (error) {
             console.error('Failed to save entity name:', error);
