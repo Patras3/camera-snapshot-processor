@@ -887,6 +887,13 @@
             const domain = entityId.split('.')[0];
             const suggestions = STATE_SUGGESTIONS[domain];
 
+            // Always remove any existing suggested states section first
+            const existingSection = document.querySelector('.suggested-states');
+            if (existingSection) {
+                existingSection.remove();
+            }
+
+            // If no suggestions, we're done
             if (!suggestions || suggestions.length === 0) {
                 return;
             }
