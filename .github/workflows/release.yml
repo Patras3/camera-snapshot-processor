@@ -57,7 +57,7 @@ jobs:
           echo "PREV_TAG=$PREV_TAG" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: camera_snapshot_processor-${{ steps.get_version.outputs.VERSION }}.zip
           generate_release_notes: true
