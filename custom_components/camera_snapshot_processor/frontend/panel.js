@@ -17,7 +17,7 @@
     let cropResizing = false;
     let cropStartX = 0;
     let cropStartY = 0;
-    let currentTab = 'dimensions';
+    let currentTab = 'crop';
     let sourceImageData = null; // Store the source image for cropping
     let cropPreviewDebounceTimer = null;
 
@@ -347,10 +347,16 @@
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
+            tab.addEventListener('click', async () => {
                 currentTab = tab.dataset.tab;
                 switchTab(currentTab);
-                updateCropVisibility();
+                await updateCropVisibility();
+
+                // Refresh preview when switching away from crop tab
+                // This ensures overlays/state icons show on the cropped result
+                if (currentTab !== 'crop') {
+                    schedulePreviewUpdate();
+                }
             });
         });
 
@@ -371,13 +377,14 @@
         });
 
         // Crop toggle
-        document.getElementById('crop_enabled').addEventListener('change', (e) => {
+        document.getElementById('crop_enabled').addEventListener('change', async (e) => {
             const isEnabled = e.target.checked;
             document.getElementById('crop-controls').style.display = isEnabled ? 'block' : 'none';
 
             // Enable or disable interactive cropping based on whether image is already cropped
             updateCropInteractionState();
-            updateCropVisibility();
+            await updateCropVisibility();
+            updateEffectiveSourceSize();
         });
 
         // Reset crop button
@@ -464,6 +471,31 @@
                 });
             }
         });
+
+        // Opacity sliders - update value display
+        const overlayColorOpacitySlider = document.getElementById('overlay_color_opacity');
+        const overlayColorOpacityValue = document.getElementById('overlay_color_opacity-value');
+        if (overlayColorOpacitySlider && overlayColorOpacityValue) {
+            overlayColorOpacitySlider.addEventListener('input', (e) => {
+                overlayColorOpacityValue.textContent = e.target.value;
+            });
+        }
+
+        const overlayBackgroundOpacitySlider = document.getElementById('overlay_background_opacity');
+        const overlayBackgroundOpacityValue = document.getElementById('overlay_background_opacity-value');
+        if (overlayBackgroundOpacitySlider && overlayBackgroundOpacityValue) {
+            overlayBackgroundOpacitySlider.addEventListener('input', (e) => {
+                overlayBackgroundOpacityValue.textContent = e.target.value;
+            });
+        }
+
+        const stateIconBackgroundOpacitySlider = document.getElementById('state_icon_background_opacity');
+        const stateIconBackgroundOpacityValue = document.getElementById('state_icon_background_opacity-value');
+        if (stateIconBackgroundOpacitySlider && stateIconBackgroundOpacityValue) {
+            stateIconBackgroundOpacitySlider.addEventListener('input', (e) => {
+                stateIconBackgroundOpacityValue.textContent = e.target.value;
+            });
+        }
 
         // Setup interactive crop
         setupCropInteraction();
@@ -1033,11 +1065,14 @@
                 overlayColorPickr.setColor(hexColor);
             }
         }
+        setInputValue('overlay_color_opacity', config.overlay_color_opacity !== undefined ? config.overlay_color_opacity : 1.0);
+
         const bgColor = config.overlay_background || '#00000000';
         setInputValue('overlay_background', bgColor);
         if (overlayBackgroundPickr) {
             overlayBackgroundPickr.setColor(bgColor);
         }
+        setInputValue('overlay_background_opacity', config.overlay_background_opacity !== undefined ? config.overlay_background_opacity : 1.0);
 
         // State icon background
         const stateIconBgColor = config.state_icon_background || '#00000000';
@@ -1045,6 +1080,7 @@
         if (stateIconBackgroundPickr) {
             stateIconBackgroundPickr.setColor(stateIconBgColor);
         }
+        setInputValue('state_icon_background_opacity', config.state_icon_background_opacity !== undefined ? config.state_icon_background_opacity : 1.0);
 
         // Stream
         setInputValue('rtsp_url', config.rtsp_url || '');
@@ -1092,8 +1128,11 @@
             text_position: document.getElementById('text_position').value,
             text_font_size: parseInt(document.getElementById('text_font_size').value),
             overlay_color: hexToRgb(document.getElementById('overlay_color').value),
+            overlay_color_opacity: parseFloat(document.getElementById('overlay_color_opacity').value),
             overlay_background: document.getElementById('overlay_background').value,
+            overlay_background_opacity: parseFloat(document.getElementById('overlay_background_opacity').value),
             state_icon_background: document.getElementById('state_icon_background').value,
+            state_icon_background_opacity: parseFloat(document.getElementById('state_icon_background_opacity').value),
             rtsp_url: document.getElementById('rtsp_url').value,
             state_icons: stateIcons,
             source_width: currentConfig.source_width,
@@ -1228,7 +1267,7 @@
 
                 // Update interaction state
                 updateCropInteractionState();
-                updateCropVisibility();
+                updateCropVisibility(); // Don't await here as it's in an onload callback
             };
 
             previewImage.src = imageUrl;
@@ -1405,7 +1444,7 @@
         }
     }
 
-    function updateCropVisibility() {
+    async function updateCropVisibility() {
         const cropEnabled = document.getElementById('crop_enabled').checked;
         const cropOverlay = document.getElementById('crop-overlay');
         const onCropTab = currentTab === 'crop';
@@ -1415,18 +1454,31 @@
         const previewImageWrapper = document.getElementById('preview-image-wrapper');
 
         // Show dual-image layout only when on crop tab and crop enabled
-        if (onCropTab && cropEnabled && sourceImageData) {
-            // Show dual-image cropping interface
-            sourceImageSection.style.display = 'block';
-            croppedPreviewSection.style.display = 'block';
-            previewImageWrapper.style.display = 'none';
-            cropOverlay.style.display = 'block';
+        if (onCropTab && cropEnabled) {
+            // Ensure source image is loaded
+            if (!sourceImageData && currentCameraId) {
+                await loadSourceImage();
+            }
 
-            // Update crop box position
-            updateCropBox();
+            if (sourceImageData) {
+                // Show dual-image cropping interface
+                sourceImageSection.style.display = 'block';
+                croppedPreviewSection.style.display = 'block';
+                previewImageWrapper.style.display = 'none';
+                cropOverlay.style.display = 'block';
 
-            // Update cropped preview
-            updateCropPreview();
+                // Update crop box position
+                updateCropBox();
+
+                // Update cropped preview
+                updateCropPreview();
+            } else {
+                // Fallback to regular preview if source image failed to load
+                sourceImageSection.style.display = 'none';
+                croppedPreviewSection.style.display = 'none';
+                previewImageWrapper.style.display = 'block';
+                cropOverlay.style.display = 'none';
+            }
         } else {
             // Show regular preview image
             sourceImageSection.style.display = 'none';
@@ -1459,7 +1511,7 @@
 
         // Re-enable interactive cropping
         updateCropInteractionState();
-        updateCropVisibility();
+        updateCropVisibility(); // Don't await in sync function
 
         // Update dimensions display
         updateDimensionsDisplay();
@@ -1488,6 +1540,28 @@
                 previewDim.style.fontWeight = '600';
             }
         }
+
+        // Update effective source dimensions display
+        updateEffectiveSourceSize();
+    }
+
+    function updateEffectiveSourceSize() {
+        const effectiveSizeEl = document.getElementById('effective-source-dimensions');
+        if (!effectiveSizeEl || !sourceImageDimensions.width) return;
+
+        const formData = getFormData();
+
+        if (formData.crop_enabled) {
+            // Crop enabled - show cropped dimensions
+            const cropWidth = formData.crop_width;
+            const cropHeight = formData.crop_height;
+            effectiveSizeEl.textContent = `${cropWidth} × ${cropHeight}px (cropped from ${sourceImageDimensions.width} × ${sourceImageDimensions.height}px)`;
+            effectiveSizeEl.style.color = '#ff9800';
+        } else {
+            // No crop - show original dimensions
+            effectiveSizeEl.textContent = `${sourceImageDimensions.width} × ${sourceImageDimensions.height}px (original camera resolution)`;
+            effectiveSizeEl.style.color = '#4caf50';
+        }
     }
 
     // ==================== Interactive Crop ====================
@@ -1511,10 +1585,11 @@
 
         // Update crop box when crop inputs change
         ['crop_x', 'crop_y', 'crop_width', 'crop_height'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
+            document.getElementById(id).addEventListener('input', async () => {
                 updateCropBox();
                 updateCropInteractionState();
-                updateCropVisibility();
+                await updateCropVisibility();
+                updateEffectiveSourceSize();
             });
         });
 

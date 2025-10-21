@@ -30,8 +30,11 @@ CONF_DATETIME_FONT_SIZE = "datetime_font_size"
 CONF_TEXT_FONT_SIZE = "text_font_size"
 CONF_STATE_ICON_FONT_SIZE = "state_icon_font_size"
 CONF_OVERLAY_COLOR = "overlay_color"
+CONF_OVERLAY_COLOR_OPACITY = "overlay_color_opacity"
 CONF_OVERLAY_BACKGROUND = "overlay_background"
+CONF_OVERLAY_BACKGROUND_OPACITY = "overlay_background_opacity"
 CONF_STATE_ICON_BACKGROUND = "state_icon_background"
+CONF_STATE_ICON_BACKGROUND_OPACITY = "state_icon_background_opacity"
 
 # State icons configuration (multiple icons supported)
 CONF_STATE_ICONS = "state_icons"

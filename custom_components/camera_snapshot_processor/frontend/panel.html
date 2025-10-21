@@ -68,8 +68,8 @@
                     <!-- Left: Configuration Tabs -->
                     <div class="config-panel">
                         <div class="tabs">
-                            <button class="tab active" data-tab="dimensions">📐 Dimensions</button>
-                            <button class="tab" data-tab="crop">✂️ Crop</button>
+                            <button class="tab active" data-tab="crop">✂️ Crop</button>
+                            <button class="tab" data-tab="dimensions">📐 Dimensions</button>
                             <button class="tab" data-tab="overlays">🎨 Overlays</button>
                             <button class="tab" data-tab="state-icons">💡 State Icons</button>
                             <button class="tab" data-tab="stream">📡 Stream</button>
@@ -77,15 +77,21 @@
 
                         <div class="tab-content">
                             <!-- Dimensions Tab -->
-                            <div class="tab-pane active" id="tab-dimensions">
+                            <div class="tab-pane" id="tab-dimensions">
                                 <h3>Image Dimensions & Quality</h3>
 
                                 <!-- Info tip at top -->
                                 <div class="info-tip">
                                     <span class="info-icon">ℹ️</span>
                                     <span class="info-text">
-                                        For custom values or upscaling, type directly in the input fields.
+                                        <strong>Step 2:</strong> Resize the image to these dimensions.<br>
+                                        If cropping is enabled, the cropped area will be resized. Otherwise, the full camera image will be resized.
                                     </span>
+                                </div>
+
+                                <!-- Source dimensions display -->
+                                <div id="source-size-info" style="background: #e8f5e9; border: 2px solid #4caf50; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 14px;">
+                                    <strong>Source Image Size:</strong> <span id="effective-source-dimensions">Loading...</span>
                                 </div>
 
                                 <div class="form-group checkbox-group">
@@ -128,8 +134,16 @@
                             </div>
 
                             <!-- Crop Tab -->
-                            <div class="tab-pane" id="tab-crop">
+                            <div class="tab-pane active" id="tab-crop">
                                 <h3>Crop Settings</h3>
+
+                                <!-- Info tip at top -->
+                                <div class="info-tip">
+                                    <span class="info-icon">ℹ️</span>
+                                    <span class="info-text">
+                                        <strong>Optional Step 1:</strong> Crop a specific area from the camera image. If enabled, cropping happens before resizing (Dimensions tab).
+                                    </span>
+                                </div>
 
                                 <div class="form-group checkbox-group">
                                     <label>
@@ -246,6 +260,12 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label for="overlay_color_opacity">Text Opacity</label>
+                                        <input type="range" id="overlay_color_opacity" min="0" max="1" step="0.1" value="1.0">
+                                        <span class="value-display" id="overlay_color_opacity-value">1.0</span>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label for="overlay_background">Background Color</label>
                                         <div style="display: flex; align-items: center; gap: 10px;">
                                             <div class="pickr-container" id="overlay_background_picker"></div>
@@ -253,6 +273,12 @@
                                         </div>
                                         <input type="hidden" id="overlay_background" value="#00000000">
                                         <small class="help-text">Click "Clear" for no background</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="overlay_background_opacity">Background Opacity</label>
+                                        <input type="range" id="overlay_background_opacity" min="0" max="1" step="0.1" value="1.0">
+                                        <span class="value-display" id="overlay_background_opacity-value">1.0</span>
                                     </div>
                                 </div>
                             </div>
@@ -279,6 +305,12 @@
                                         </div>
                                         <input type="hidden" id="state_icon_background" value="#00000000">
                                         <small class="help-text">Background color for all state icons. Click "Clear" for no background</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state_icon_background_opacity">Background Opacity</label>
+                                        <input type="range" id="state_icon_background_opacity" min="0" max="1" step="0.1" value="1.0">
+                                        <span class="value-display" id="state_icon_background_opacity-value">1.0</span>
                                     </div>
                                 </div>
                             </div>
