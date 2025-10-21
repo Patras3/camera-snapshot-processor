@@ -11,6 +11,7 @@ from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
 
 from .const import (
+    CONF_ENTITY_NAME,
     CONF_HEIGHT,
     CONF_KEEP_RATIO,
     CONF_QUALITY,
@@ -97,13 +98,8 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
                     {"error": "source_camera is required"}, status=400
                 )
 
-            # Check if camera already exists
+            # Get existing cameras (allow duplicates for multi-processing same source)
             cameras = dict(entry.data.get("cameras", {}))
-            for cam_id, cam_config in cameras.items():
-                if cam_config.get(CONF_SOURCE_CAMERA) == source_camera:
-                    return web.json_response(
-                        {"error": "Camera already configured"}, status=400
-                    )
 
             # Get camera entity to fetch source dimensions
             camera_entity = self._get_camera_entity(source_camera)
@@ -149,6 +145,27 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
                 default_width = DEFAULT_WIDTH
                 default_height = DEFAULT_HEIGHT
 
+            # Generate unique entity name if same source camera is used multiple times
+            source_name = source_camera.replace("camera.", "")
+            base_entity_name = f"{source_name}_processed"
+
+            # Count existing cameras with the same source
+            same_source_count = sum(
+                1 for cam_config in cameras.values()
+                if cam_config.get(CONF_SOURCE_CAMERA) == source_camera
+            )
+
+            # If this is a duplicate source, add suffix (_2, _3, etc.)
+            if same_source_count > 0:
+                entity_name = f"{base_entity_name}_{same_source_count + 1}"
+                _LOGGER.info(
+                    "Multiple cameras from same source %s detected. Using entity name: %s",
+                    source_camera,
+                    entity_name,
+                )
+            else:
+                entity_name = base_entity_name
+
             # Create new camera with smart default config
             camera_id = str(uuid.uuid4())
             cameras[camera_id] = {
@@ -160,6 +177,7 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
                 CONF_KEEP_RATIO: DEFAULT_KEEP_RATIO,
                 CONF_QUALITY: DEFAULT_QUALITY,
                 CONF_STATE_ICONS: [],
+                CONF_ENTITY_NAME: entity_name,  # Set custom entity name for duplicates
             }
 
             # Update entry
