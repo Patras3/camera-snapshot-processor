@@ -714,9 +714,8 @@
 
             availableCameras = data.cameras || [];
 
-            // Filter out already configured cameras
-            const configuredCameras = Object.values(cameras).map(c => c.source_camera);
-            availableCameras = availableCameras.filter(c => !configuredCameras.includes(c.entity_id));
+            // Note: We allow selecting the same camera multiple times
+            // to support multiple processed versions of the same source
 
             // Populate select
             const select = document.getElementById('new-camera-select');
