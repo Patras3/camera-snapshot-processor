@@ -164,7 +164,7 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
                 _LOGGER.info(
                     "Multiple cameras from same source %s detected. Using entity name: %s",
                     source_camera,
-                    entity_name,
+                    entity_name.replace('\r', '').replace('\n', ''),
                 )
             else:
                 entity_name = base_entity_name
