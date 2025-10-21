@@ -304,19 +304,31 @@
                                 <div class="spinner"></div>
                                 <p>Loading preview...</p>
                             </div>
-                            <div id="preview-image-wrapper" class="preview-image-wrapper">
-                                <img id="preview-image" alt="Preview">
-                                <div id="crop-overlay" class="crop-overlay" style="display: none;">
-                                    <div class="crop-box">
-                                        <div class="crop-handle nw"></div>
-                                        <div class="crop-handle ne"></div>
-                                        <div class="crop-handle sw"></div>
-                                        <div class="crop-handle se"></div>
+                            <!-- Original/Source Image with Crop Overlay -->
+                            <div id="source-image-section" style="display: none;">
+                                <h4 class="crop-section-title">Source Image (adjust crop area)</h4>
+                                <div id="source-image-wrapper" class="preview-image-wrapper">
+                                    <img id="source-image" alt="Source Image">
+                                    <div id="crop-overlay" class="crop-overlay" style="display: none;">
+                                        <div class="crop-box">
+                                            <div class="crop-handle nw"></div>
+                                            <div class="crop-handle ne"></div>
+                                            <div class="crop-handle sw"></div>
+                                            <div class="crop-handle se"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div id="crop-message" class="crop-message" style="display: none;">
-                                    To change cropping - use 🔄 Reset button
+                            </div>
+                            <!-- Cropped Preview Image -->
+                            <div id="cropped-preview-section" style="display: none;">
+                                <h4 class="crop-section-title">Cropped Result Preview</h4>
+                                <div id="cropped-preview-wrapper" class="preview-image-wrapper">
+                                    <canvas id="cropped-preview-canvas"></canvas>
                                 </div>
+                            </div>
+                            <!-- Main Preview Image (shown when not cropping) -->
+                            <div id="preview-image-wrapper" class="preview-image-wrapper">
+                                <img id="preview-image" alt="Preview">
                             </div>
                         </div>
                         <div class="preview-info">
