@@ -27,7 +27,6 @@ from .const import (
     CONF_OVERLAY_BACKGROUND,
     CONF_OVERLAY_BACKGROUND_OPACITY,
     CONF_OVERLAY_COLOR,
-    CONF_OVERLAY_COLOR_OPACITY,
     CONF_OVERLAY_FONT_SIZE,
     CONF_QUALITY,
     CONF_RESIZE_ALGORITHM,
@@ -340,16 +339,15 @@ class ImageProcessor:
         )
         bg_color = self.config.get(CONF_OVERLAY_BACKGROUND, DEFAULT_OVERLAY_BACKGROUND)
 
-        # Get opacity values (default to 1.0 = fully opaque)
-        color_opacity = float(self.config.get(CONF_OVERLAY_COLOR_OPACITY, 1.0))
+        # Get opacity value for background (default to 1.0 = fully opaque)
         bg_opacity = float(self.config.get(CONF_OVERLAY_BACKGROUND_OPACITY, 1.0))
 
         # Normalize colors (convert RGB lists to hex strings if needed)
         color = self._normalize_color(color)
         bg_color = self._normalize_color(bg_color)
 
-        # Convert hex colors to RGBA and apply opacity
-        text_color = self._hex_to_rgba(color, opacity=color_opacity)
+        # Convert hex colors to RGBA (text is always fully opaque, background uses opacity)
+        text_color = self._hex_to_rgba(color)
         background_color = self._hex_to_rgba(bg_color, opacity=bg_opacity)
 
         # Get text bounding box - bbox gives us the actual visual bounds of the text
@@ -554,8 +552,6 @@ class ImageProcessor:
         text_template = matched_rule.get("text_template", False)
         icon_color = matched_rule.get("icon_color", [255, 255, 255])
         text_color = matched_rule.get("text_color", [255, 255, 255])
-        icon_opacity = float(matched_rule.get("icon_opacity", 1.0))
-        text_opacity = float(matched_rule.get("text_opacity", 1.0))
         icon_background = matched_rule.get("icon_background", False)
 
         _LOGGER.debug(
@@ -644,7 +640,6 @@ class ImageProcessor:
             icon_part = {
                 "text": icon,
                 "color": icon_color,
-                "opacity": icon_opacity,
                 "font": icon_font,
                 "icon_background": icon_background,
             }
@@ -653,7 +648,6 @@ class ImageProcessor:
             text_part = {
                 "text": text,
                 "color": text_color,
-                "opacity": text_opacity,
                 "font": text_font,
             }
 
@@ -816,8 +810,7 @@ class ImageProcessor:
                 continue
 
             color = self._normalize_color(part["color"])
-            opacity = part.get("opacity", 1.0)  # Default to fully opaque
-            rgba_color = self._hex_to_rgba(color, opacity=opacity)
+            rgba_color = self._hex_to_rgba(color)
 
             # Draw icon background if requested
             if part.get("icon_background", False):

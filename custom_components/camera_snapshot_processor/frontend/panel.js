@@ -473,14 +473,6 @@
         });
 
         // Opacity sliders - update value display
-        const overlayColorOpacitySlider = document.getElementById('overlay_color_opacity');
-        const overlayColorOpacityValue = document.getElementById('overlay_color_opacity-value');
-        if (overlayColorOpacitySlider && overlayColorOpacityValue) {
-            overlayColorOpacitySlider.addEventListener('input', (e) => {
-                overlayColorOpacityValue.textContent = e.target.value;
-            });
-        }
-
         const overlayBackgroundOpacitySlider = document.getElementById('overlay_background_opacity');
         const overlayBackgroundOpacityValue = document.getElementById('overlay_background_opacity-value');
         if (overlayBackgroundOpacitySlider && overlayBackgroundOpacityValue) {
@@ -1065,8 +1057,6 @@
                 overlayColorPickr.setColor(hexColor);
             }
         }
-        setInputValue('overlay_color_opacity', config.overlay_color_opacity !== undefined ? config.overlay_color_opacity : 1.0);
-
         const bgColor = config.overlay_background || '#00000000';
         setInputValue('overlay_background', bgColor);
         if (overlayBackgroundPickr) {
@@ -1128,7 +1118,6 @@
             text_position: document.getElementById('text_position').value,
             text_font_size: parseInt(document.getElementById('text_font_size').value),
             overlay_color: hexToRgb(document.getElementById('overlay_color').value),
-            overlay_color_opacity: parseFloat(document.getElementById('overlay_color_opacity').value),
             overlay_background: document.getElementById('overlay_background').value,
             overlay_background_opacity: parseFloat(document.getElementById('overlay_background_opacity').value),
             state_icon_background: document.getElementById('state_icon_background').value,

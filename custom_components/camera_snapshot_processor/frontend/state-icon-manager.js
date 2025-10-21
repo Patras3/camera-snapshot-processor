@@ -612,21 +612,9 @@
                     </div>
 
                     <div>
-                        <label>Icon Opacity:</label>
-                        <input type="range" class="rule-icon-opacity" min="0" max="1" step="0.1" value="${rule.icon_opacity !== undefined ? rule.icon_opacity : 1.0}">
-                        <span class="value-display rule-icon-opacity-value">${rule.icon_opacity !== undefined ? rule.icon_opacity : 1.0}</span>
-                    </div>
-
-                    <div>
                         <label>Text Color:</label>
                         <div class="pickr-container rule-text-color-picker"></div>
                         <input type="hidden" class="rule-text-color" value="${this.rgbToHex(rule.text_color)}">
-                    </div>
-
-                    <div>
-                        <label>Text Opacity:</label>
-                        <input type="range" class="rule-text-opacity" min="0" max="1" step="0.1" value="${rule.text_opacity !== undefined ? rule.text_opacity : 1.0}">
-                        <span class="value-display rule-text-opacity-value">${rule.text_opacity !== undefined ? rule.text_opacity : 1.0}</span>
                     </div>
 
                     <div>
@@ -757,19 +745,6 @@
             textColorPickr.on('hide', () => {
                 textColorPickr.applyColor(true);
             });
-
-            // Opacity sliders - update value display
-            const iconOpacitySlider = body.querySelector('.rule-icon-opacity');
-            const iconOpacityValue = body.querySelector('.rule-icon-opacity-value');
-            iconOpacitySlider.addEventListener('input', (e) => {
-                iconOpacityValue.textContent = e.target.value;
-            });
-
-            const textOpacitySlider = body.querySelector('.rule-text-opacity');
-            const textOpacityValue = body.querySelector('.rule-text-opacity-value');
-            textOpacitySlider.addEventListener('input', (e) => {
-                textOpacityValue.textContent = e.target.value;
-            });
         }
 
         async testTemplate(body) {
@@ -886,8 +861,6 @@
             rule.text_template = body.querySelector('.rule-text-template').checked;
             rule.icon_color = this.hexToRgb(body.querySelector('.rule-icon-color').value);
             rule.text_color = this.hexToRgb(body.querySelector('.rule-text-color').value);
-            rule.icon_opacity = parseFloat(body.querySelector('.rule-icon-opacity').value);
-            rule.text_opacity = parseFloat(body.querySelector('.rule-text-opacity').value);
             rule.display_order = body.querySelector('.rule-display-order').value;
             rule.icon_background = body.querySelector('.rule-icon-background').checked;
 
