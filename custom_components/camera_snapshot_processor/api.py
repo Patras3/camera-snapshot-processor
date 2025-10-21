@@ -92,6 +92,9 @@ class CameraSnapshotProcessorCamerasView(HomeAssistantView):
 
             data = await request.json()
             source_camera = data.get("source_camera")
+            if source_camera is not None:
+                # Remove newlines and carriage returns to prevent log injection
+                source_camera = source_camera.replace('\r', '').replace('\n', '')
 
             if not source_camera:
                 return web.json_response(
