@@ -1861,17 +1861,19 @@ body {
 /* Strftime documentation help */
 #strftime-info-icon {
     display: inline-block;
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
     text-align: center;
     background: #667eea;
     color: white;
     border-radius: 50%;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
-    margin-left: 5px;
+    margin-left: 8px;
+    margin-bottom: 5px;
+    vertical-align: middle;
     user-select: none;
     transition: background 0.2s;
 }
