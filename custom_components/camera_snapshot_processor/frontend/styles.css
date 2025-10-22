@@ -532,11 +532,12 @@ body {
     border-radius: 12px;
     padding: 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     position: relative;
     min-height: 400px;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .preview-image-wrapper {
@@ -550,10 +551,31 @@ body {
 
 #preview-image, #source-image {
     max-width: 100%;
-    max-height: 100%;
+    max-height: 70vh;
+    width: 100%;
+    height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     display: block;
+    object-fit: contain;
+}
+
+/* Source image wrapper for crop mode */
+#source-image-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Cropped preview wrapper */
+#cropped-preview-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
 }
 
 .loading {
@@ -642,19 +664,36 @@ body {
 
 /* Crop Section Titles */
 .crop-section-title {
-    margin: 15px 0 10px 0;
-    font-size: 0.95em;
+    margin: 0 0 10px 0;
+    font-size: 0.9em;
     font-weight: 600;
     color: #667eea;
     text-align: center;
 }
 
+/* Dual-Image Crop Layout - Vertical Stacking */
+#source-image-section,
+#cropped-preview-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 #source-image-section {
-    margin-bottom: 20px;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 3px solid #667eea;
 }
 
 #cropped-preview-section {
-    margin-bottom: 20px;
+    padding-top: 5px;
+}
+
+/* When both crop sections are visible, make preview-container use column layout */
+.preview-container:has(#source-image-section[style*="display: block"]) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #cropped-preview-canvas {
@@ -662,6 +701,7 @@ body {
     height: auto;
     display: block;
     border-radius: 8px;
+    object-fit: contain;
 }
 
 /* State Icons List */
