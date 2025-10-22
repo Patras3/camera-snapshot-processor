@@ -1147,6 +1147,7 @@
         // DateTime overlay
         setInputValue('datetime_enabled', config.datetime_enabled || false);
         setInputValue('datetime_format', config.datetime_format || '%Y-%m-%d %H:%M:%S');
+        setInputValue('datetime_locale', config.datetime_locale || 'system');
         setInputValue('datetime_position', config.datetime_position || 'top_left');
         // Use suggested size if config doesn't have a custom value (default is 24)
         const datetimeFontSize = (config.datetime_font_size && config.datetime_font_size !== 24) ?
@@ -1246,6 +1247,7 @@
             crop_height: parseInt(document.getElementById('crop_height').value),
             datetime_enabled: document.getElementById('datetime_enabled').checked,
             datetime_format: document.getElementById('datetime_format').value,
+            datetime_locale: document.getElementById('datetime_locale').value,
             datetime_position: document.getElementById('datetime_position').value,
             datetime_font_size: parseInt(document.getElementById('datetime_font_size').value),
             text_enabled: document.getElementById('text_enabled').checked,

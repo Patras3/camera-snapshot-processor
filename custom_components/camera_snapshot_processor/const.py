@@ -21,6 +21,7 @@ CONF_RTSP_URL = "rtsp_url"
 # Overlay configuration
 CONF_DATETIME_ENABLED = "datetime_enabled"
 CONF_DATETIME_FORMAT = "datetime_format"
+CONF_DATETIME_LOCALE = "datetime_locale"
 CONF_DATETIME_POSITION = "datetime_position"
 CONF_TEXT_ENABLED = "text_enabled"
 CONF_TEXT_VALUE = "text_value"
@@ -63,6 +64,7 @@ DEFAULT_KEEP_RATIO = True
 DEFAULT_QUALITY = 85
 DEFAULT_CROP_ENABLED = False
 DEFAULT_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+DEFAULT_DATETIME_LOCALE = "system"  # Use system/HA locale
 DEFAULT_FONT_SIZE = 20  # Legacy
 DEFAULT_DATETIME_FONT_SIZE = 24
 DEFAULT_TEXT_FONT_SIZE = 20
@@ -95,3 +97,30 @@ POSITIONS = [
     POSITION_BOTTOM_LEFT,
     POSITION_BOTTOM_RIGHT,
 ]
+
+# Supported locales for datetime formatting
+SUPPORTED_LOCALES = {
+    "system": "System Default",
+    "en_US": "English (US)",
+    "en_GB": "English (UK)",
+    "pl_PL": "Polish",
+    "de_DE": "German",
+    "fr_FR": "French",
+    "es_ES": "Spanish",
+    "it_IT": "Italian",
+    "nl_NL": "Dutch",
+    "sv_SE": "Swedish",
+    "nb_NO": "Norwegian",
+    "da_DK": "Danish",
+    "fi_FI": "Finnish",
+    "cs_CZ": "Czech",
+    "pt_PT": "Portuguese",
+    "pt_BR": "Portuguese (Brazil)",
+    "ru_RU": "Russian",
+    "ja_JP": "Japanese",
+    "zh_CN": "Chinese (Simplified)",
+    "ko_KR": "Korean",
+    "tr_TR": "Turkish",
+    "ar_SA": "Arabic",
+    "he_IL": "Hebrew",
+}

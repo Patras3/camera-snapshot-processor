@@ -91,6 +91,7 @@
         "data": {
           "datetime_enabled": "Show date/time",
           "datetime_format": "Date/time format",
+          "datetime_locale": "Language/Locale",
           "datetime_position": "Date/time position",
           "text_enabled": "Show custom text",
           "text_value": "Custom text",

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import io
+import locale
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -21,6 +22,7 @@ from .const import (
     CONF_DATETIME_ENABLED,
     CONF_DATETIME_FONT_SIZE,
     CONF_DATETIME_FORMAT,
+    CONF_DATETIME_LOCALE,
     CONF_DATETIME_POSITION,
     CONF_HEIGHT,
     CONF_KEEP_RATIO,
@@ -47,6 +49,7 @@ from .const import (
     CONF_TEXT_VALUE,
     CONF_WIDTH,
     DEFAULT_DATETIME_FONT_SIZE,
+    DEFAULT_DATETIME_LOCALE,
     DEFAULT_OVERLAY_BACKGROUND,
     DEFAULT_OVERLAY_COLOR,
     DEFAULT_QUALITY,
@@ -234,7 +237,13 @@ class ImageProcessor:
             )
             datetime_font = self._get_font(datetime_font_size)
             datetime_format = self.config.get(CONF_DATETIME_FORMAT, "%Y-%m-%d %H:%M:%S")
-            datetime_text = datetime.now().strftime(datetime_format)
+
+            # Apply locale for datetime formatting
+            datetime_locale = self.config.get(
+                CONF_DATETIME_LOCALE, DEFAULT_DATETIME_LOCALE
+            )
+            datetime_text = self._format_datetime(datetime_format, datetime_locale)
+
             position = self.config.get(CONF_DATETIME_POSITION, POSITION_TOP_LEFT)
             self._draw_text(
                 draw,
@@ -1035,3 +1044,53 @@ class ImageProcessor:
         a = int(a * opacity)
 
         return (r, g, b, a)
+
+    def _format_datetime(self, format_string: str, locale_code: str) -> str:
+        """Format datetime with specified locale.
+
+        Args:
+            format_string: strftime format string
+            locale_code: Locale code (e.g., "pl_PL", "en_US", or "system")
+
+        Returns:
+            Formatted datetime string
+        """
+        # Save current locale
+        old_locale = None
+        try:
+            old_locale = locale.getlocale(locale.LC_TIME)
+        except Exception:
+            pass
+
+        try:
+            # Set locale if not "system"
+            if locale_code != "system":
+                # Try with .UTF-8 suffix first (common on Linux)
+                try:
+                    locale.setlocale(locale.LC_TIME, f"{locale_code}.UTF-8")
+                except Exception:
+                    # Try without suffix
+                    try:
+                        locale.setlocale(locale.LC_TIME, locale_code)
+                    except Exception:
+                        _LOGGER.warning(
+                            "Failed to set locale %s, using system default", locale_code
+                        )
+
+            # Format datetime
+            return datetime.now().strftime(format_string)
+
+        except Exception as e:
+            _LOGGER.error(
+                "Error formatting datetime with locale %s: %s", locale_code, e
+            )
+            # Fallback to default formatting
+            return datetime.now().strftime(format_string)
+
+        finally:
+            # Restore original locale
+            if old_locale:
+                try:
+                    locale.setlocale(locale.LC_TIME, old_locale)
+                except Exception:
+                    pass
