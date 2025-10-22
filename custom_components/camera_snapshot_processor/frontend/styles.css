@@ -516,7 +516,10 @@ body {
     background: #fafafa;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    max-height: calc(100vh - 100px);
 }
 
 .preview-panel h3 {
@@ -536,8 +539,7 @@ body {
     justify-content: center;
     position: relative;
     min-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: visible;
 }
 
 .preview-image-wrapper {
