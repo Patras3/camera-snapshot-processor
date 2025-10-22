@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import asyncio
 import io
-import locale
 import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from babel.dates import format_datetime
 from homeassistant.core import HomeAssistant
 from PIL import Image, ImageDraw, ImageFont
 
@@ -1046,7 +1046,7 @@ class ImageProcessor:
         return (r, g, b, a)
 
     def _format_datetime(self, format_string: str, locale_code: str) -> str:
-        """Format datetime with specified locale.
+        """Format datetime with specified locale using babel.
 
         Args:
             format_string: strftime format string
@@ -1055,62 +1055,83 @@ class ImageProcessor:
         Returns:
             Formatted datetime string
         """
-        # Save current locale
-        old_locale = None
+        now = datetime.now()
+
+        # If system locale or formatting doesn't use locale-specific codes, use strftime
+        locale_codes = ["%a", "%A", "%b", "%B", "%p"]
+        uses_locale = any(code in format_string for code in locale_codes)
+
+        if locale_code == "system" or not uses_locale:
+            return now.strftime(format_string)
+
+        # Convert strftime format to babel format and use babel for locale-aware formatting
+        # This is more reliable than Python's locale module
         try:
-            old_locale = locale.getlocale(locale.LC_TIME)
-        except Exception:
-            pass
+            # Convert locale code from pl_PL to just pl for babel
+            babel_locale = (
+                locale_code.split("_")[0] if "_" in locale_code else locale_code
+            )
 
-        try:
-            # Set locale if not "system"
-            if locale_code != "system":
-                # Try with .UTF-8 suffix first (common on Linux)
-                try:
-                    locale.setlocale(locale.LC_TIME, f"{locale_code}.UTF-8")
-                    _LOGGER.debug("Successfully set locale to %s.UTF-8", locale_code)
-                except Exception as e1:
-                    # Try without suffix
-                    try:
-                        locale.setlocale(locale.LC_TIME, locale_code)
-                        _LOGGER.debug("Successfully set locale to %s", locale_code)
-                    except Exception as e2:
-                        _LOGGER.warning(
-                            "Failed to set locale %s (tried .UTF-8 and base): %s, %s. "
-                            "Locale may not be installed. Using system default. "
-                            "To install, run: locale-gen %s.UTF-8 && dpkg-reconfigure locales",
-                            locale_code,
-                            e1,
-                            e2,
-                            locale_code,
-                        )
+            # Custom formatter that handles strftime-style format strings with babel
+            result = self._format_with_babel(now, format_string, babel_locale)
 
-            # Format datetime
-            result = datetime.now().strftime(format_string)
-
-            # Log the result for debugging
-            if locale_code != "system":
-                current_locale = locale.getlocale(locale.LC_TIME)
-                _LOGGER.debug(
-                    "Formatted datetime with locale %s (actual: %s): %s",
-                    locale_code,
-                    current_locale,
-                    result,
-                )
-
+            _LOGGER.debug(
+                "Formatted datetime with babel locale %s: %s",
+                babel_locale,
+                result,
+            )
             return result
 
         except Exception as e:
-            _LOGGER.error(
-                "Error formatting datetime with locale %s: %s", locale_code, e
+            _LOGGER.warning(
+                "Failed to format with babel locale %s: %s. Falling back to strftime.",
+                locale_code,
+                e,
             )
-            # Fallback to default formatting
-            return datetime.now().strftime(format_string)
+            return now.strftime(format_string)
 
-        finally:
-            # Restore original locale
-            if old_locale:
-                try:
-                    locale.setlocale(locale.LC_TIME, old_locale)
-                except Exception:
-                    pass
+    def _format_with_babel(
+        self, dt: datetime, format_string: str, locale_code: str
+    ) -> str:
+        """Format datetime using babel for locale-aware parts.
+
+        Args:
+            dt: datetime object
+            format_string: strftime format string
+            locale_code: Babel locale code (e.g., "pl", "en", "de")
+
+        Returns:
+            Formatted datetime string
+        """
+        # Replace locale-specific format codes with babel formatting
+        result = format_string
+
+        # Weekday abbreviated
+        if "%a" in result:
+            weekday_abbr = format_datetime(dt, "EEE", locale=locale_code)
+            result = result.replace("%a", weekday_abbr)
+
+        # Weekday full
+        if "%A" in result:
+            weekday_full = format_datetime(dt, "EEEE", locale=locale_code)
+            result = result.replace("%A", weekday_full)
+
+        # Month abbreviated
+        if "%b" in result:
+            month_abbr = format_datetime(dt, "MMM", locale=locale_code)
+            result = result.replace("%b", month_abbr)
+
+        # Month full
+        if "%B" in result:
+            month_full = format_datetime(dt, "MMMM", locale=locale_code)
+            result = result.replace("%B", month_full)
+
+        # AM/PM
+        if "%p" in result:
+            am_pm = format_datetime(dt, "a", locale=locale_code)
+            result = result.replace("%p", am_pm)
+
+        # Now format the remaining non-locale parts with strftime
+        result = dt.strftime(result)
+
+        return result
