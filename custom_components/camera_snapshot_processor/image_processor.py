@@ -1068,17 +1068,37 @@ class ImageProcessor:
                 # Try with .UTF-8 suffix first (common on Linux)
                 try:
                     locale.setlocale(locale.LC_TIME, f"{locale_code}.UTF-8")
-                except Exception:
+                    _LOGGER.debug("Successfully set locale to %s.UTF-8", locale_code)
+                except Exception as e1:
                     # Try without suffix
                     try:
                         locale.setlocale(locale.LC_TIME, locale_code)
-                    except Exception:
+                        _LOGGER.debug("Successfully set locale to %s", locale_code)
+                    except Exception as e2:
                         _LOGGER.warning(
-                            "Failed to set locale %s, using system default", locale_code
+                            "Failed to set locale %s (tried .UTF-8 and base): %s, %s. "
+                            "Locale may not be installed. Using system default. "
+                            "To install, run: locale-gen %s.UTF-8 && dpkg-reconfigure locales",
+                            locale_code,
+                            e1,
+                            e2,
+                            locale_code,
                         )
 
             # Format datetime
-            return datetime.now().strftime(format_string)
+            result = datetime.now().strftime(format_string)
+
+            # Log the result for debugging
+            if locale_code != "system":
+                current_locale = locale.getlocale(locale.LC_TIME)
+                _LOGGER.debug(
+                    "Formatted datetime with locale %s (actual: %s): %s",
+                    locale_code,
+                    current_locale,
+                    result,
+                )
+
+            return result
 
         except Exception as e:
             _LOGGER.error(
