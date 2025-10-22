@@ -1861,21 +1861,22 @@ body {
 /* Strftime documentation help */
 #strftime-info-icon {
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
     text-align: center;
     background: #667eea;
     color: white;
     border-radius: 50%;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
-    margin-left: 8px;
-    margin-bottom: 5px;
-    vertical-align: middle;
+    margin-left: 6px;
+    vertical-align: baseline;
     user-select: none;
     transition: background 0.2s;
+    position: relative;
+    top: -1px;
 }
 
 #strftime-info-icon:hover {
