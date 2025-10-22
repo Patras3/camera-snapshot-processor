@@ -1859,7 +1859,7 @@ body {
 }
 
 /* Strftime documentation help */
-.info-icon {
+#strftime-info-icon {
     display: inline-block;
     width: 18px;
     height: 18px;
@@ -1876,7 +1876,7 @@ body {
     transition: background 0.2s;
 }
 
-.info-icon:hover {
+#strftime-info-icon:hover {
     background: #5568d3;
 }
 

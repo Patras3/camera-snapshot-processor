@@ -686,10 +686,16 @@
         const helpBox = document.getElementById('strftime-examples');
         const datetimeFormatInput = document.getElementById('datetime_format');
 
+        // Check if elements exist
+        if (!infoIcon || !helpBox || !datetimeFormatInput) {
+            console.error('Strftime help elements not found:', { infoIcon, helpBox, datetimeFormatInput });
+            return;
+        }
+
         // Toggle help box when info icon is clicked
         infoIcon.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (helpBox.style.display === 'none') {
+            if (helpBox.style.display === 'none' || helpBox.style.display === '') {
                 helpBox.style.display = 'block';
             } else {
                 helpBox.style.display = 'none';
@@ -705,7 +711,8 @@
 
         // Handle copy functionality for format examples
         helpBox.querySelectorAll('.copyable').forEach(codeElement => {
-            codeElement.addEventListener('click', () => {
+            codeElement.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const format = codeElement.getAttribute('data-format');
                 datetimeFormatInput.value = format;
                 datetimeFormatInput.dispatchEvent(new Event('input', { bubbles: true }));
