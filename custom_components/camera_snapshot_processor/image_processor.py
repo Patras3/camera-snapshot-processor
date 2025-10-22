@@ -25,11 +25,13 @@ from .const import (
     CONF_HEIGHT,
     CONF_KEEP_RATIO,
     CONF_OVERLAY_BACKGROUND,
+    CONF_OVERLAY_BACKGROUND_OPACITY,
     CONF_OVERLAY_COLOR,
     CONF_OVERLAY_FONT_SIZE,
     CONF_QUALITY,
     CONF_RESIZE_ALGORITHM,
     CONF_STATE_ICON_BACKGROUND,
+    CONF_STATE_ICON_BACKGROUND_OPACITY,
     CONF_STATE_ICONS,
     CONF_TEXT_ENABLED,
     CONF_TEXT_FONT_SIZE,
@@ -337,13 +339,16 @@ class ImageProcessor:
         )
         bg_color = self.config.get(CONF_OVERLAY_BACKGROUND, DEFAULT_OVERLAY_BACKGROUND)
 
+        # Get opacity value for background (default to 1.0 = fully opaque)
+        bg_opacity = float(self.config.get(CONF_OVERLAY_BACKGROUND_OPACITY, 1.0))
+
         # Normalize colors (convert RGB lists to hex strings if needed)
         color = self._normalize_color(color)
         bg_color = self._normalize_color(bg_color)
 
-        # Convert hex colors to RGBA
+        # Convert hex colors to RGBA (text is always fully opaque, background uses opacity)
         text_color = self._hex_to_rgba(color)
-        background_color = self._hex_to_rgba(bg_color)
+        background_color = self._hex_to_rgba(bg_color, opacity=bg_opacity)
 
         # Get text bounding box - bbox gives us the actual visual bounds of the text
         # bbox[0], bbox[1] = left, top offset from anchor point (can be negative)
@@ -640,7 +645,11 @@ class ImageProcessor:
             }
 
         if text:
-            text_part = {"text": text, "color": text_color, "font": text_font}
+            text_part = {
+                "text": text,
+                "color": text_color,
+                "font": text_font,
+            }
 
         # Add icon and text in the specified order
         if display_order == "text_first":
@@ -680,12 +689,15 @@ class ImageProcessor:
             bg_color = self.config.get(
                 CONF_STATE_ICON_BACKGROUND, DEFAULT_STATE_ICON_BACKGROUND
             )
+            bg_opacity = float(self.config.get(CONF_STATE_ICON_BACKGROUND_OPACITY, 1.0))
         else:
             bg_color = self.config.get(
                 CONF_OVERLAY_BACKGROUND, DEFAULT_OVERLAY_BACKGROUND
             )
+            bg_opacity = float(self.config.get(CONF_OVERLAY_BACKGROUND_OPACITY, 1.0))
+
         bg_color = self._normalize_color(bg_color)
-        background_color = self._hex_to_rgba(bg_color)
+        background_color = self._hex_to_rgba(bg_color, opacity=bg_opacity)
 
         # Calculate total dimensions - each part uses its own font
         # We need to track bbox offsets to align the background properly
@@ -872,8 +884,16 @@ class ImageProcessor:
         return color  # Already a string
 
     @staticmethod
-    def _hex_to_rgba(hex_color: str) -> tuple[int, int, int, int]:
-        """Convert hex color to RGBA tuple."""
+    def _hex_to_rgba(hex_color: str, opacity: float = 1.0) -> tuple[int, int, int, int]:
+        """Convert hex color to RGBA tuple with optional opacity override.
+
+        Args:
+            hex_color: Hex color string (e.g., "#RRGGBB" or "#RRGGBBAA")
+            opacity: Opacity value from 0.0 to 1.0 (multiplied with existing alpha)
+
+        Returns:
+            RGBA tuple (r, g, b, a) where each value is 0-255
+        """
         hex_color = hex_color.lstrip("#")
 
         if len(hex_color) == 8:
@@ -895,5 +915,8 @@ class ImageProcessor:
         else:
             # Default to white
             r, g, b, a = 255, 255, 255, 255
+
+        # Apply opacity multiplier to alpha channel
+        a = int(a * opacity)
 
         return (r, g, b, a)

@@ -548,7 +548,7 @@ body {
     display: block;
 }
 
-#preview-image {
+#preview-image, #source-image {
     max-width: 100%;
     max-height: 100%;
     border-radius: 8px;
@@ -638,6 +638,30 @@ body {
     pointer-events: none;
     z-index: 20;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Crop Section Titles */
+.crop-section-title {
+    margin: 15px 0 10px 0;
+    font-size: 0.95em;
+    font-weight: 600;
+    color: #667eea;
+    text-align: center;
+}
+
+#source-image-section {
+    margin-bottom: 20px;
+}
+
+#cropped-preview-section {
+    margin-bottom: 20px;
+}
+
+#cropped-preview-canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
 }
 
 /* State Icons List */

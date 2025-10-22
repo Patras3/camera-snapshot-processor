@@ -17,7 +17,9 @@
     let cropResizing = false;
     let cropStartX = 0;
     let cropStartY = 0;
-    let currentTab = 'dimensions';
+    let currentTab = 'crop';
+    let sourceImageData = null; // Store the source image for cropping
+    let cropPreviewDebounceTimer = null;
 
     // ==================== Custom Notification System ====================
 
@@ -345,10 +347,16 @@
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
+            tab.addEventListener('click', async () => {
                 currentTab = tab.dataset.tab;
                 switchTab(currentTab);
-                updateCropVisibility();
+                await updateCropVisibility();
+
+                // Refresh preview when switching away from crop tab
+                // This ensures overlays/state icons show on the cropped result
+                if (currentTab !== 'crop') {
+                    schedulePreviewUpdate();
+                }
             });
         });
 
@@ -369,13 +377,14 @@
         });
 
         // Crop toggle
-        document.getElementById('crop_enabled').addEventListener('change', (e) => {
+        document.getElementById('crop_enabled').addEventListener('change', async (e) => {
             const isEnabled = e.target.checked;
             document.getElementById('crop-controls').style.display = isEnabled ? 'block' : 'none';
 
             // Enable or disable interactive cropping based on whether image is already cropped
             updateCropInteractionState();
-            updateCropVisibility();
+            await updateCropVisibility();
+            updateEffectiveSourceSize();
         });
 
         // Reset crop button
@@ -462,6 +471,23 @@
                 });
             }
         });
+
+        // Opacity sliders - update value display
+        const overlayBackgroundOpacitySlider = document.getElementById('overlay_background_opacity');
+        const overlayBackgroundOpacityValue = document.getElementById('overlay_background_opacity-value');
+        if (overlayBackgroundOpacitySlider && overlayBackgroundOpacityValue) {
+            overlayBackgroundOpacitySlider.addEventListener('input', (e) => {
+                overlayBackgroundOpacityValue.textContent = e.target.value;
+            });
+        }
+
+        const stateIconBackgroundOpacitySlider = document.getElementById('state_icon_background_opacity');
+        const stateIconBackgroundOpacityValue = document.getElementById('state_icon_background_opacity-value');
+        if (stateIconBackgroundOpacitySlider && stateIconBackgroundOpacityValue) {
+            stateIconBackgroundOpacitySlider.addEventListener('input', (e) => {
+                stateIconBackgroundOpacityValue.textContent = e.target.value;
+            });
+        }
 
         // Setup interactive crop
         setupCropInteraction();
@@ -1035,6 +1061,7 @@
         if (overlayBackgroundPickr) {
             overlayBackgroundPickr.setColor(bgColor);
         }
+        setInputValue('overlay_background_opacity', config.overlay_background_opacity !== undefined ? config.overlay_background_opacity : 1.0);
 
         // State icon background
         const stateIconBgColor = config.state_icon_background || '#00000000';
@@ -1042,6 +1069,7 @@
         if (stateIconBackgroundPickr) {
             stateIconBackgroundPickr.setColor(stateIconBgColor);
         }
+        setInputValue('state_icon_background_opacity', config.state_icon_background_opacity !== undefined ? config.state_icon_background_opacity : 1.0);
 
         // Stream
         setInputValue('rtsp_url', config.rtsp_url || '');
@@ -1090,7 +1118,9 @@
             text_font_size: parseInt(document.getElementById('text_font_size').value),
             overlay_color: hexToRgb(document.getElementById('overlay_color').value),
             overlay_background: document.getElementById('overlay_background').value,
+            overlay_background_opacity: parseFloat(document.getElementById('overlay_background_opacity').value),
             state_icon_background: document.getElementById('state_icon_background').value,
+            state_icon_background_opacity: parseFloat(document.getElementById('state_icon_background_opacity').value),
             rtsp_url: document.getElementById('rtsp_url').value,
             state_icons: stateIcons,
             source_width: currentConfig.source_width,
@@ -1225,7 +1255,7 @@
 
                 // Update interaction state
                 updateCropInteractionState();
-                updateCropVisibility();
+                updateCropVisibility(); // Don't await here as it's in an onload callback
             };
 
             previewImage.src = imageUrl;
@@ -1259,6 +1289,22 @@
             // Get the blob to calculate original file size
             const blob = await response.blob();
             sourceImageSize = blob.size;
+
+            // Store source image for cropping
+            const imageUrl = URL.createObjectURL(blob);
+            const img = new Image();
+            img.onload = () => {
+                sourceImageData = img;
+                // Update source image element
+                const sourceImg = document.getElementById('source-image');
+                if (sourceImg) {
+                    sourceImg.src = imageUrl;
+                }
+                // Update crop preview if crop is enabled
+                updateCropVisibility();
+                updateCropPreview();
+            };
+            img.src = imageUrl;
 
             const sourceDim = document.getElementById('source-dimensions');
             if (sourceDim) {
@@ -1308,6 +1354,45 @@
         }
     }
 
+    function updateCropPreview() {
+        // Debounced update of crop preview
+        clearTimeout(cropPreviewDebounceTimer);
+        cropPreviewDebounceTimer = setTimeout(() => {
+            drawCropPreview();
+        }, 100); // 100ms debounce
+    }
+
+    function drawCropPreview() {
+        if (!sourceImageData || !document.getElementById('crop_enabled').checked || currentTab !== 'crop') {
+            return;
+        }
+
+        const canvas = document.getElementById('cropped-preview-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const cropX = parseInt(document.getElementById('crop_x').value) || 0;
+        const cropY = parseInt(document.getElementById('crop_y').value) || 0;
+        const cropWidth = parseInt(document.getElementById('crop_width').value) || sourceImageDimensions.width;
+        const cropHeight = parseInt(document.getElementById('crop_height').value) || sourceImageDimensions.height;
+
+        // Validate crop boundaries
+        const validCropX = Math.max(0, Math.min(cropX, sourceImageDimensions.width));
+        const validCropY = Math.max(0, Math.min(cropY, sourceImageDimensions.height));
+        const validCropWidth = Math.min(cropWidth, sourceImageDimensions.width - validCropX);
+        const validCropHeight = Math.min(cropHeight, sourceImageDimensions.height - validCropY);
+
+        // Set canvas size to crop dimensions
+        canvas.width = validCropWidth;
+        canvas.height = validCropHeight;
+
+        // Draw the cropped portion
+        ctx.drawImage(
+            sourceImageData,
+            validCropX, validCropY, validCropWidth, validCropHeight,
+            0, 0, validCropWidth, validCropHeight
+        );
+    }
+
     function isCropped() {
         // Check if current crop settings differ from source dimensions
         if (!sourceImageDimensions.width || !sourceImageDimensions.height) {
@@ -1331,48 +1416,63 @@
         if (cropEnabled && isCropped()) {
             // Image is cropped - show reset button
             resetBtn.style.display = 'inline-block';
-
-            // Disable crop input fields
-            ['crop_x', 'crop_y', 'crop_width', 'crop_height'].forEach(id => {
-                document.getElementById(id).disabled = true;
-            });
         } else if (cropEnabled) {
-            // Crop enabled but not yet cropped - hide reset button
+            // Crop enabled but not yet cropped - show reset button (always visible for easy reset)
+            resetBtn.style.display = 'inline-block';
+        } else {
+            // Crop not enabled - hide reset button
             resetBtn.style.display = 'none';
+        }
 
-            // Enable crop input fields
+        // Always enable crop input fields when crop is enabled (allow multiple adjustments)
+        if (cropEnabled) {
             ['crop_x', 'crop_y', 'crop_width', 'crop_height'].forEach(id => {
                 document.getElementById(id).disabled = false;
             });
         }
     }
 
-    function updateCropVisibility() {
+    async function updateCropVisibility() {
         const cropEnabled = document.getElementById('crop_enabled').checked;
         const cropOverlay = document.getElementById('crop-overlay');
-        const cropMessage = document.getElementById('crop-message');
-        const cropBox = cropOverlay.querySelector('.crop-box');
         const onCropTab = currentTab === 'crop';
 
-        // Only show crop-related UI when on crop tab
-        if (!onCropTab || !cropEnabled) {
-            cropOverlay.style.display = 'none';
-            cropMessage.style.display = 'none';
-            return;
-        }
+        const sourceImageSection = document.getElementById('source-image-section');
+        const croppedPreviewSection = document.getElementById('cropped-preview-section');
+        const previewImageWrapper = document.getElementById('preview-image-wrapper');
 
-        // On crop tab with crop enabled
-        if (isCropped()) {
-            // Image is already cropped - hide overlay, show message
-            cropOverlay.style.display = 'none';
-            cropMessage.style.display = 'flex';
+        // Show dual-image layout only when on crop tab and crop enabled
+        if (onCropTab && cropEnabled) {
+            // Ensure source image is loaded
+            if (!sourceImageData && currentCameraId) {
+                await loadSourceImage();
+            }
+
+            if (sourceImageData) {
+                // Show dual-image cropping interface
+                sourceImageSection.style.display = 'block';
+                croppedPreviewSection.style.display = 'block';
+                previewImageWrapper.style.display = 'none';
+                cropOverlay.style.display = 'block';
+
+                // Update crop box position
+                updateCropBox();
+
+                // Update cropped preview
+                updateCropPreview();
+            } else {
+                // Fallback to regular preview if source image failed to load
+                sourceImageSection.style.display = 'none';
+                croppedPreviewSection.style.display = 'none';
+                previewImageWrapper.style.display = 'block';
+                cropOverlay.style.display = 'none';
+            }
         } else {
-            // Image not cropped - show overlay for interactive cropping
-            cropOverlay.style.display = 'block';
-            cropMessage.style.display = 'none';
-            cropBox.style.pointerEvents = 'auto';
-            cropBox.style.opacity = '1';
-            cropBox.style.cursor = 'move';
+            // Show regular preview image
+            sourceImageSection.style.display = 'none';
+            croppedPreviewSection.style.display = 'none';
+            previewImageWrapper.style.display = 'block';
+            cropOverlay.style.display = 'none';
         }
     }
 
@@ -1399,7 +1499,7 @@
 
         // Re-enable interactive cropping
         updateCropInteractionState();
-        updateCropVisibility();
+        updateCropVisibility(); // Don't await in sync function
 
         // Update dimensions display
         updateDimensionsDisplay();
@@ -1428,12 +1528,34 @@
                 previewDim.style.fontWeight = '600';
             }
         }
+
+        // Update effective source dimensions display
+        updateEffectiveSourceSize();
+    }
+
+    function updateEffectiveSourceSize() {
+        const effectiveSizeEl = document.getElementById('effective-source-dimensions');
+        if (!effectiveSizeEl || !sourceImageDimensions.width) return;
+
+        const formData = getFormData();
+
+        if (formData.crop_enabled) {
+            // Crop enabled - show cropped dimensions
+            const cropWidth = formData.crop_width;
+            const cropHeight = formData.crop_height;
+            effectiveSizeEl.textContent = `${cropWidth} × ${cropHeight}px (cropped from ${sourceImageDimensions.width} × ${sourceImageDimensions.height}px)`;
+            effectiveSizeEl.style.color = '#ff9800';
+        } else {
+            // No crop - show original dimensions
+            effectiveSizeEl.textContent = `${sourceImageDimensions.width} × ${sourceImageDimensions.height}px (original camera resolution)`;
+            effectiveSizeEl.style.color = '#4caf50';
+        }
     }
 
     // ==================== Interactive Crop ====================
 
     function setupCropInteraction() {
-        const previewImage = document.getElementById('preview-image');
+        const sourceImage = document.getElementById('source-image');
         const cropOverlay = document.getElementById('crop-overlay');
         const cropBox = cropOverlay.querySelector('.crop-box');
 
@@ -1451,28 +1573,21 @@
 
         // Update crop box when crop inputs change
         ['crop_x', 'crop_y', 'crop_width', 'crop_height'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
+            document.getElementById(id).addEventListener('input', async () => {
                 updateCropBox();
                 updateCropInteractionState();
-                updateCropVisibility();
+                await updateCropVisibility();
+                updateEffectiveSourceSize();
             });
         });
 
-        // Update crop box when preview loads
-        previewImage.addEventListener('load', updateCropBox);
+        // Update crop box when source image loads
+        sourceImage.addEventListener('load', updateCropBox);
     }
 
     function startDragCrop(e) {
-        // Don't allow dragging if image is already cropped
-        if (isCropped()) {
-            return;
-        }
-
         e.preventDefault();
         cropDragging = true;
-
-        const previewImage = document.getElementById('preview-image');
-        const rect = previewImage.getBoundingClientRect();
 
         cropStartX = e.clientX;
         cropStartY = e.clientY;
@@ -1487,8 +1602,9 @@
             const deltaY = e.clientY - cropStartY;
 
             // Convert pixel delta to source image coordinates
-            const scaleX = sourceImageDimensions.width / previewImage.clientWidth;
-            const scaleY = sourceImageDimensions.height / previewImage.clientHeight;
+            const sourceImage = document.getElementById('source-image');
+            const scaleX = sourceImageDimensions.width / sourceImage.clientWidth;
+            const scaleY = sourceImageDimensions.height / sourceImage.clientHeight;
 
             const newX = Math.max(0, Math.min(sourceImageDimensions.width - parseInt(document.getElementById('crop_width').value), currentX + deltaX * scaleX));
             const newY = Math.max(0, Math.min(sourceImageDimensions.height - parseInt(document.getElementById('crop_height').value), currentY + deltaY * scaleY));
@@ -1496,13 +1612,13 @@
             setInputValue('crop_x', Math.round(newX));
             setInputValue('crop_y', Math.round(newY));
             updateCropBox();
+            updateCropPreview(); // Update crop preview immediately
         };
 
         const mouseup = () => {
             cropDragging = false;
             document.removeEventListener('mousemove', mousemove);
             document.removeEventListener('mouseup', mouseup);
-            schedulePreviewUpdate();
         };
 
         document.addEventListener('mousemove', mousemove);
@@ -1510,15 +1626,10 @@
     }
 
     function startResizeCrop(e, handlePosition) {
-        // Don't allow resizing if image is already cropped
-        if (isCropped()) {
-            return;
-        }
-
         e.preventDefault();
         cropResizing = true;
 
-        const previewImage = document.getElementById('preview-image');
+        const sourceImage = document.getElementById('source-image');
         cropStartX = e.clientX;
         cropStartY = e.clientY;
 
@@ -1534,8 +1645,9 @@
             const deltaY = e.clientY - cropStartY;
 
             // Convert pixel delta to source image coordinates
-            const scaleX = sourceImageDimensions.width / previewImage.clientWidth;
-            const scaleY = sourceImageDimensions.height / previewImage.clientHeight;
+            const sourceImage = document.getElementById('source-image');
+            const scaleX = sourceImageDimensions.width / sourceImage.clientWidth;
+            const scaleY = sourceImageDimensions.height / sourceImage.clientHeight;
 
             let newX = startX;
             let newY = startY;
@@ -1572,13 +1684,13 @@
             setInputValue('crop_width', Math.round(newWidth));
             setInputValue('crop_height', Math.round(newHeight));
             updateCropBox();
+            updateCropPreview(); // Update crop preview immediately
         };
 
         const mouseup = () => {
             cropResizing = false;
             document.removeEventListener('mousemove', mousemove);
             document.removeEventListener('mouseup', mouseup);
-            schedulePreviewUpdate();
         };
 
         document.addEventListener('mousemove', mousemove);
@@ -1586,11 +1698,13 @@
     }
 
     function updateCropBox() {
-        const previewImage = document.getElementById('preview-image');
         const cropOverlay = document.getElementById('crop-overlay');
         const cropBox = cropOverlay.querySelector('.crop-box');
 
-        if (!previewImage.complete || !sourceImageDimensions.width) return;
+        // Use source image when in dual-image crop mode
+        const sourceImage = document.getElementById('source-image');
+
+        if (!sourceImage || !sourceImage.complete || !sourceImageDimensions.width) return;
 
         const cropX = parseInt(document.getElementById('crop_x').value) || 0;
         const cropY = parseInt(document.getElementById('crop_y').value) || 0;
@@ -1599,8 +1713,8 @@
 
         // Calculate position and size based on the actual rendered image dimensions
         // The image is rendered with natural aspect ratio maintained
-        const scaleX = previewImage.clientWidth / sourceImageDimensions.width;
-        const scaleY = previewImage.clientHeight / sourceImageDimensions.height;
+        const scaleX = sourceImage.clientWidth / sourceImageDimensions.width;
+        const scaleY = sourceImage.clientHeight / sourceImageDimensions.height;
 
         const left = cropX * scaleX;
         const top = cropY * scaleY;
