@@ -1590,10 +1590,6 @@
         e.preventDefault();
         cropDragging = true;
 
-        // Use source image for crop interaction
-        const sourceImage = document.getElementById('source-image');
-        const rect = sourceImage.getBoundingClientRect();
-
         cropStartX = e.clientX;
         cropStartY = e.clientY;
 
