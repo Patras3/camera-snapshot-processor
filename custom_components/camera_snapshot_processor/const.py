@@ -32,8 +32,16 @@ CONF_STATE_ICON_FONT_SIZE = "state_icon_font_size"
 CONF_OVERLAY_COLOR = "overlay_color"
 CONF_OVERLAY_BACKGROUND = "overlay_background"
 CONF_OVERLAY_BACKGROUND_OPACITY = "overlay_background_opacity"
+CONF_TEXT_SHADOW_ENABLED = "text_shadow_enabled"
+CONF_TEXT_SHADOW_COLOR = "text_shadow_color"
+CONF_TEXT_SHADOW_OFFSET_X = "text_shadow_offset_x"
+CONF_TEXT_SHADOW_OFFSET_Y = "text_shadow_offset_y"
 CONF_STATE_ICON_BACKGROUND = "state_icon_background"
 CONF_STATE_ICON_BACKGROUND_OPACITY = "state_icon_background_opacity"
+CONF_STATE_ICON_SHADOW_ENABLED = "state_icon_shadow_enabled"
+CONF_STATE_ICON_SHADOW_COLOR = "state_icon_shadow_color"
+CONF_STATE_ICON_SHADOW_OFFSET_X = "state_icon_shadow_offset_x"
+CONF_STATE_ICON_SHADOW_OFFSET_Y = "state_icon_shadow_offset_y"
 
 # State icons configuration (multiple icons supported)
 CONF_STATE_ICONS = "state_icons"
@@ -61,7 +69,15 @@ DEFAULT_TEXT_FONT_SIZE = 20
 DEFAULT_STATE_ICON_FONT_SIZE = 18
 DEFAULT_OVERLAY_COLOR = [255, 255, 255]  # White - RGB list for ColorRGBSelector
 DEFAULT_OVERLAY_BACKGROUND = "#00000000"
+DEFAULT_TEXT_SHADOW_ENABLED = False
+DEFAULT_TEXT_SHADOW_COLOR = "#000000"  # Black
+DEFAULT_TEXT_SHADOW_OFFSET_X = 2
+DEFAULT_TEXT_SHADOW_OFFSET_Y = 2
 DEFAULT_STATE_ICON_BACKGROUND = "#00000000"  # Transparent by default
+DEFAULT_STATE_ICON_SHADOW_ENABLED = False
+DEFAULT_STATE_ICON_SHADOW_COLOR = "#000000"  # Black
+DEFAULT_STATE_ICON_SHADOW_OFFSET_X = 2
+DEFAULT_STATE_ICON_SHADOW_OFFSET_Y = 2
 DEFAULT_RESIZE_ALGORITHM = "lanczos"  # lanczos (best quality) or bilinear (faster)
 
 # Preview

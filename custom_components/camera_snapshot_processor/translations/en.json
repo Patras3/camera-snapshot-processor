@@ -97,7 +97,11 @@
           "text_position": "Text position",
           "overlay_font_size": "Font size",
           "overlay_color": "Text color (hex)",
-          "overlay_background": "Background color (hex with alpha)"
+          "overlay_background": "Background color (hex with alpha)",
+          "text_shadow_enabled": "Enable text shadow",
+          "text_shadow_color": "Shadow color (hex)",
+          "text_shadow_offset_x": "Shadow horizontal offset (px)",
+          "text_shadow_offset_y": "Shadow vertical offset (px)"
         }
       },
       "state_icons": {
@@ -118,7 +122,11 @@
           "state_off": "State value for 'OFF' (e.g. off, closed, away)",
           "text_off": "Text to show when OFF",
           "color_off": "Color when OFF (hex)",
-          "position": "Position on image"
+          "position": "Position on image",
+          "state_icon_shadow_enabled": "Enable icon shadow",
+          "state_icon_shadow_color": "Shadow color (hex)",
+          "state_icon_shadow_offset_x": "Shadow horizontal offset (px)",
+          "state_icon_shadow_offset_y": "Shadow vertical offset (px)"
         }
       },
       "stream": {

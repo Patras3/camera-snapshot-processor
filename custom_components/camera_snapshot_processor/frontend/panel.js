@@ -494,13 +494,18 @@
 
         // Setup Pickr color pickers
         setupColorPickers();
+
+        // Setup strftime help
+        setupStrftimeHelp();
     }
 
     // ==================== Pickr Color Pickers ====================
 
     let overlayColorPickr = null;
     let overlayBackgroundPickr = null;
+    let textShadowColorPickr = null;
     let stateIconBackgroundPickr = null;
+    let stateIconShadowColorPickr = null;
 
     function setupColorPickers() {
         // Text Color Picker (RGB only)
@@ -596,6 +601,66 @@
             stateIconBackgroundPickr.applyColor(true);
         });
 
+        // Text Shadow Color Picker
+        textShadowColorPickr = Pickr.create({
+            el: '#text_shadow_color_picker',
+            theme: 'nano',
+            default: '#000000',
+            swatches: [
+                '#000000', '#ffffff', '#333333', '#666666',
+                '#667eea', '#4caf50', '#ffeb3b', '#ff9800', '#f44336'
+            ],
+            components: {
+                preview: true,
+                opacity: false,
+                hue: true,
+                interaction: {
+                    input: true
+                }
+            }
+        });
+
+        textShadowColorPickr.on('change', (color) => {
+            if (color) {
+                document.getElementById('text_shadow_color').value = color.toHEXA().toString();
+                schedulePreviewUpdate();
+            }
+        });
+
+        textShadowColorPickr.on('hide', () => {
+            textShadowColorPickr.applyColor(true);
+        });
+
+        // State Icon Shadow Color Picker
+        stateIconShadowColorPickr = Pickr.create({
+            el: '#state_icon_shadow_color_picker',
+            theme: 'nano',
+            default: '#000000',
+            swatches: [
+                '#000000', '#ffffff', '#333333', '#666666',
+                '#667eea', '#4caf50', '#ffeb3b', '#ff9800', '#f44336'
+            ],
+            components: {
+                preview: true,
+                opacity: false,
+                hue: true,
+                interaction: {
+                    input: true
+                }
+            }
+        });
+
+        stateIconShadowColorPickr.on('change', (color) => {
+            if (color) {
+                document.getElementById('state_icon_shadow_color').value = color.toHEXA().toString();
+                schedulePreviewUpdate();
+            }
+        });
+
+        stateIconShadowColorPickr.on('hide', () => {
+            stateIconShadowColorPickr.applyColor(true);
+        });
+
         // Clear background buttons
         document.getElementById('clear_overlay_background').addEventListener('click', () => {
             document.getElementById('overlay_background').value = '#00000000';
@@ -611,6 +676,50 @@
                 stateIconBackgroundPickr.setColor('#00000000');
             }
             schedulePreviewUpdate();
+        });
+    }
+
+    // ==================== Strftime Help ====================
+
+    function setupStrftimeHelp() {
+        const infoIcon = document.getElementById('strftime-info-icon');
+        const helpBox = document.getElementById('strftime-examples');
+        const datetimeFormatInput = document.getElementById('datetime_format');
+
+        // Toggle help box when info icon is clicked
+        infoIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (helpBox.style.display === 'none') {
+                helpBox.style.display = 'block';
+            } else {
+                helpBox.style.display = 'none';
+            }
+        });
+
+        // Close help box when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!helpBox.contains(e.target) && e.target !== infoIcon) {
+                helpBox.style.display = 'none';
+            }
+        });
+
+        // Handle copy functionality for format examples
+        helpBox.querySelectorAll('.copyable').forEach(codeElement => {
+            codeElement.addEventListener('click', () => {
+                const format = codeElement.getAttribute('data-format');
+                datetimeFormatInput.value = format;
+                datetimeFormatInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+                // Visual feedback
+                const originalText = codeElement.textContent;
+                codeElement.textContent = '✓ Copied!';
+                setTimeout(() => {
+                    codeElement.textContent = originalText;
+                }, 1000);
+
+                // Update preview
+                schedulePreviewUpdate();
+            });
         });
     }
 
@@ -1063,6 +1172,16 @@
         }
         setInputValue('overlay_background_opacity', config.overlay_background_opacity !== undefined ? config.overlay_background_opacity : 1.0);
 
+        // Text shadow
+        setInputValue('text_shadow_enabled', config.text_shadow_enabled || false);
+        const textShadowColor = config.text_shadow_color || '#000000';
+        setInputValue('text_shadow_color', textShadowColor);
+        if (textShadowColorPickr) {
+            textShadowColorPickr.setColor(textShadowColor);
+        }
+        setInputValue('text_shadow_offset_x', config.text_shadow_offset_x !== undefined ? config.text_shadow_offset_x : 2);
+        setInputValue('text_shadow_offset_y', config.text_shadow_offset_y !== undefined ? config.text_shadow_offset_y : 2);
+
         // State icon background
         const stateIconBgColor = config.state_icon_background || '#00000000';
         setInputValue('state_icon_background', stateIconBgColor);
@@ -1070,6 +1189,16 @@
             stateIconBackgroundPickr.setColor(stateIconBgColor);
         }
         setInputValue('state_icon_background_opacity', config.state_icon_background_opacity !== undefined ? config.state_icon_background_opacity : 1.0);
+
+        // State icon shadow
+        setInputValue('state_icon_shadow_enabled', config.state_icon_shadow_enabled || false);
+        const stateIconShadowColor = config.state_icon_shadow_color || '#000000';
+        setInputValue('state_icon_shadow_color', stateIconShadowColor);
+        if (stateIconShadowColorPickr) {
+            stateIconShadowColorPickr.setColor(stateIconShadowColor);
+        }
+        setInputValue('state_icon_shadow_offset_x', config.state_icon_shadow_offset_x !== undefined ? config.state_icon_shadow_offset_x : 2);
+        setInputValue('state_icon_shadow_offset_y', config.state_icon_shadow_offset_y !== undefined ? config.state_icon_shadow_offset_y : 2);
 
         // Stream
         setInputValue('rtsp_url', config.rtsp_url || '');
@@ -1119,8 +1248,16 @@
             overlay_color: hexToRgb(document.getElementById('overlay_color').value),
             overlay_background: document.getElementById('overlay_background').value,
             overlay_background_opacity: parseFloat(document.getElementById('overlay_background_opacity').value),
+            text_shadow_enabled: document.getElementById('text_shadow_enabled').checked,
+            text_shadow_color: document.getElementById('text_shadow_color').value,
+            text_shadow_offset_x: parseInt(document.getElementById('text_shadow_offset_x').value),
+            text_shadow_offset_y: parseInt(document.getElementById('text_shadow_offset_y').value),
             state_icon_background: document.getElementById('state_icon_background').value,
             state_icon_background_opacity: parseFloat(document.getElementById('state_icon_background_opacity').value),
+            state_icon_shadow_enabled: document.getElementById('state_icon_shadow_enabled').checked,
+            state_icon_shadow_color: document.getElementById('state_icon_shadow_color').value,
+            state_icon_shadow_offset_x: parseInt(document.getElementById('state_icon_shadow_offset_x').value),
+            state_icon_shadow_offset_y: parseInt(document.getElementById('state_icon_shadow_offset_y').value),
             rtsp_url: document.getElementById('rtsp_url').value,
             state_icons: stateIcons,
             source_width: currentConfig.source_width,

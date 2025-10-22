@@ -196,9 +196,59 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="datetime_format">Format</label>
+                                        <label for="datetime_format">
+                                            Format
+                                            <span class="info-icon" id="strftime-info-icon" title="Click for examples">ⓘ</span>
+                                        </label>
                                         <input type="text" id="datetime_format" value="%Y-%m-%d %H:%M:%S">
-                                        <small class="help-text">Python strftime format</small>
+                                        <small class="help-text">
+                                            Python strftime format -
+                                            <a href="https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes" target="_blank" rel="noopener noreferrer">View full documentation</a>
+                                        </small>
+                                        <div id="strftime-examples" class="strftime-help-box" style="display: none;">
+                                            <h4>Common Format Codes:</h4>
+                                            <ul class="format-examples">
+                                                <li><code>%Y</code> - Year with century (2024)</li>
+                                                <li><code>%y</code> - Year without century (24)</li>
+                                                <li><code>%m</code> - Month as zero-padded number (01-12)</li>
+                                                <li><code>%B</code> - Month full name (January, February)</li>
+                                                <li><code>%b</code> - Month abbreviated (Jan, Feb)</li>
+                                                <li><code>%d</code> - Day of month (01-31)</li>
+                                                <li><code>%H</code> - Hour 24-hour (00-23)</li>
+                                                <li><code>%I</code> - Hour 12-hour (01-12)</li>
+                                                <li><code>%M</code> - Minute (00-59)</li>
+                                                <li><code>%S</code> - Second (00-59)</li>
+                                                <li><code>%p</code> - AM/PM</li>
+                                                <li><code>%A</code> - Weekday full name (Monday)</li>
+                                                <li><code>%a</code> - Weekday abbreviated (Mon)</li>
+                                            </ul>
+                                            <h4>Common Examples:</h4>
+                                            <ul class="format-patterns">
+                                                <li>
+                                                    <code class="copyable" data-format="%Y-%m-%d %H:%M:%S">%Y-%m-%d %H:%M:%S</code>
+                                                    <span class="example-output">→ 2024-01-15 14:30:45</span>
+                                                </li>
+                                                <li>
+                                                    <code class="copyable" data-format="%B %d, %Y %I:%M %p">%B %d, %Y %I:%M %p</code>
+                                                    <span class="example-output">→ January 15, 2024 02:30 PM</span>
+                                                </li>
+                                                <li>
+                                                    <code class="copyable" data-format="%a %d/%m/%Y %H:%M">%a %d/%m/%Y %H:%M</code>
+                                                    <span class="example-output">→ Mon 15/01/2024 14:30</span>
+                                                </li>
+                                                <li>
+                                                    <code class="copyable" data-format="%d.%m.%Y %H:%M">%d.%m.%Y %H:%M</code>
+                                                    <span class="example-output">→ 15.01.2024 14:30</span>
+                                                </li>
+                                                <li>
+                                                    <code class="copyable" data-format="%Y%m%d_%H%M%S">%Y%m%d_%H%M%S</code>
+                                                    <span class="example-output">→ 20240115_143045</span>
+                                                </li>
+                                            </ul>
+                                            <small style="display: block; margin-top: 10px; color: #888;">
+                                                Click on any format to copy it to the input field
+                                            </small>
+                                        </div>
                                     </div>
 
                                     <div class="form-group">
@@ -275,6 +325,33 @@
                                         <span class="value-display" id="overlay_background_opacity-value">1.0</span>
                                     </div>
                                 </div>
+
+                                <!-- Text Shadow -->
+                                <div class="overlay-section">
+                                    <h4>Text Shadow</h4>
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="checkbox" id="text_shadow_enabled">
+                                            Enable text shadow
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="text_shadow_color">Shadow Color</label>
+                                        <div class="pickr-container" id="text_shadow_color_picker"></div>
+                                        <input type="hidden" id="text_shadow_color" value="#000000">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="text_shadow_offset_x">Shadow Horizontal Offset (px)</label>
+                                        <input type="number" id="text_shadow_offset_x" value="2" min="-50" max="50">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="text_shadow_offset_y">Shadow Vertical Offset (px)</label>
+                                        <input type="number" id="text_shadow_offset_y" value="2" min="-50" max="50">
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- State Icons Tab -->
@@ -305,6 +382,33 @@
                                         <label for="state_icon_background_opacity">Background Opacity</label>
                                         <input type="range" id="state_icon_background_opacity" min="0" max="1" step="0.1" value="1.0">
                                         <span class="value-display" id="state_icon_background_opacity-value">1.0</span>
+                                    </div>
+                                </div>
+
+                                <!-- State Icon Shadow -->
+                                <div class="overlay-section" style="margin-top: 20px;">
+                                    <h4>State Icon Shadow</h4>
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="checkbox" id="state_icon_shadow_enabled">
+                                            Enable icon shadow
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state_icon_shadow_color">Shadow Color</label>
+                                        <div class="pickr-container" id="state_icon_shadow_color_picker"></div>
+                                        <input type="hidden" id="state_icon_shadow_color" value="#000000">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state_icon_shadow_offset_x">Shadow Horizontal Offset (px)</label>
+                                        <input type="number" id="state_icon_shadow_offset_x" value="2" min="-50" max="50">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="state_icon_shadow_offset_y">Shadow Vertical Offset (px)</label>
+                                        <input type="number" id="state_icon_shadow_offset_y" value="2" min="-50" max="50">
                                     </div>
                                 </div>
                             </div>

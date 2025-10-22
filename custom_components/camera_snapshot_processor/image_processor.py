@@ -32,10 +32,18 @@ from .const import (
     CONF_RESIZE_ALGORITHM,
     CONF_STATE_ICON_BACKGROUND,
     CONF_STATE_ICON_BACKGROUND_OPACITY,
+    CONF_STATE_ICON_SHADOW_COLOR,
+    CONF_STATE_ICON_SHADOW_ENABLED,
+    CONF_STATE_ICON_SHADOW_OFFSET_X,
+    CONF_STATE_ICON_SHADOW_OFFSET_Y,
     CONF_STATE_ICONS,
     CONF_TEXT_ENABLED,
     CONF_TEXT_FONT_SIZE,
     CONF_TEXT_POSITION,
+    CONF_TEXT_SHADOW_COLOR,
+    CONF_TEXT_SHADOW_ENABLED,
+    CONF_TEXT_SHADOW_OFFSET_X,
+    CONF_TEXT_SHADOW_OFFSET_Y,
     CONF_TEXT_VALUE,
     CONF_WIDTH,
     DEFAULT_DATETIME_FONT_SIZE,
@@ -45,7 +53,15 @@ from .const import (
     DEFAULT_RESIZE_ALGORITHM,
     DEFAULT_STATE_ICON_BACKGROUND,
     DEFAULT_STATE_ICON_FONT_SIZE,
+    DEFAULT_STATE_ICON_SHADOW_COLOR,
+    DEFAULT_STATE_ICON_SHADOW_ENABLED,
+    DEFAULT_STATE_ICON_SHADOW_OFFSET_X,
+    DEFAULT_STATE_ICON_SHADOW_OFFSET_Y,
     DEFAULT_TEXT_FONT_SIZE,
+    DEFAULT_TEXT_SHADOW_COLOR,
+    DEFAULT_TEXT_SHADOW_ENABLED,
+    DEFAULT_TEXT_SHADOW_OFFSET_X,
+    DEFAULT_TEXT_SHADOW_OFFSET_Y,
     POSITION_BOTTOM_LEFT,
     POSITION_BOTTOM_RIGHT,
     POSITION_TOP_LEFT,
@@ -407,6 +423,28 @@ class ImageProcessor:
             draw.rectangle(
                 [bg_left, bg_top, bg_right, bg_bottom],
                 fill=background_color,
+            )
+
+        # Draw text shadow if enabled
+        shadow_enabled = self.config.get(
+            CONF_TEXT_SHADOW_ENABLED, DEFAULT_TEXT_SHADOW_ENABLED
+        )
+        if shadow_enabled:
+            shadow_color = self.config.get(
+                CONF_TEXT_SHADOW_COLOR, DEFAULT_TEXT_SHADOW_COLOR
+            )
+            shadow_offset_x = int(
+                self.config.get(CONF_TEXT_SHADOW_OFFSET_X, DEFAULT_TEXT_SHADOW_OFFSET_X)
+            )
+            shadow_offset_y = int(
+                self.config.get(CONF_TEXT_SHADOW_OFFSET_Y, DEFAULT_TEXT_SHADOW_OFFSET_Y)
+            )
+            shadow_color_rgba = self._hex_to_rgba(shadow_color)
+            draw.text(
+                (x + shadow_offset_x, y + shadow_offset_y),
+                text,
+                font=font,
+                fill=shadow_color_rgba,
             )
 
         # Draw text
@@ -801,6 +839,83 @@ class ImageProcessor:
                 [bg_left, bg_top, bg_right, bg_bottom],
                 fill=background_color,
             )
+
+        # Draw shadow if enabled (for state icons)
+        if use_state_icon_background:
+            shadow_enabled = self.config.get(
+                CONF_STATE_ICON_SHADOW_ENABLED, DEFAULT_STATE_ICON_SHADOW_ENABLED
+            )
+            if shadow_enabled:
+                shadow_color = self.config.get(
+                    CONF_STATE_ICON_SHADOW_COLOR, DEFAULT_STATE_ICON_SHADOW_COLOR
+                )
+                shadow_offset_x = int(
+                    self.config.get(
+                        CONF_STATE_ICON_SHADOW_OFFSET_X,
+                        DEFAULT_STATE_ICON_SHADOW_OFFSET_X,
+                    )
+                )
+                shadow_offset_y = int(
+                    self.config.get(
+                        CONF_STATE_ICON_SHADOW_OFFSET_Y,
+                        DEFAULT_STATE_ICON_SHADOW_OFFSET_Y,
+                    )
+                )
+                shadow_color_rgba = self._hex_to_rgba(shadow_color)
+
+                # Draw shadow for each part
+                x_shadow = x_start
+                for i, part in enumerate(parts):
+                    part_font = part.get("font")
+                    if not part_font:
+                        continue
+                    text_to_draw = part["text"]
+                    if i < len(parts) - 1:
+                        text_to_draw += " "
+                    draw.text(
+                        (x_shadow + shadow_offset_x, y + shadow_offset_y),
+                        text_to_draw,
+                        font=part_font,
+                        fill=shadow_color_rgba,
+                    )
+                    x_shadow += part_widths[i]
+        else:
+            # Draw shadow for text overlays using multicolor text
+            shadow_enabled = self.config.get(
+                CONF_TEXT_SHADOW_ENABLED, DEFAULT_TEXT_SHADOW_ENABLED
+            )
+            if shadow_enabled:
+                shadow_color = self.config.get(
+                    CONF_TEXT_SHADOW_COLOR, DEFAULT_TEXT_SHADOW_COLOR
+                )
+                shadow_offset_x = int(
+                    self.config.get(
+                        CONF_TEXT_SHADOW_OFFSET_X, DEFAULT_TEXT_SHADOW_OFFSET_X
+                    )
+                )
+                shadow_offset_y = int(
+                    self.config.get(
+                        CONF_TEXT_SHADOW_OFFSET_Y, DEFAULT_TEXT_SHADOW_OFFSET_Y
+                    )
+                )
+                shadow_color_rgba = self._hex_to_rgba(shadow_color)
+
+                # Draw shadow for each part
+                x_shadow = x_start
+                for i, part in enumerate(parts):
+                    part_font = part.get("font")
+                    if not part_font:
+                        continue
+                    text_to_draw = part["text"]
+                    if i < len(parts) - 1:
+                        text_to_draw += " "
+                    draw.text(
+                        (x_shadow + shadow_offset_x, y + shadow_offset_y),
+                        text_to_draw,
+                        font=part_font,
+                        fill=shadow_color_rgba,
+                    )
+                    x_shadow += part_widths[i]
 
         # Draw each part with its own color and font
         x = x_start

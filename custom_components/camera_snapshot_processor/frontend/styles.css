@@ -1829,3 +1829,81 @@ body {
     text-align: center;
     letter-spacing: 0.3px;
 }
+
+/* Strftime documentation help */
+.info-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 5px;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.info-icon:hover {
+    background: #5568d3;
+}
+
+.strftime-help-box {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.strftime-help-box h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.strftime-help-box ul {
+    margin: 0 0 15px 0;
+    padding-left: 20px;
+}
+
+.strftime-help-box ul:last-of-type {
+    margin-bottom: 0;
+}
+
+.strftime-help-box li {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.strftime-help-box code {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #d63384;
+}
+
+.strftime-help-box code.copyable {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.strftime-help-box code.copyable:hover {
+    background: #667eea;
+    color: white;
+}
+
+.example-output {
+    color: #888;
+    font-size: 12px;
+    margin-left: 5px;
+}
