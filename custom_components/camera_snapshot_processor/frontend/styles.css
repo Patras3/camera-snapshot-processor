@@ -526,6 +526,13 @@ body {
     font-size: 1.5em;
     margin-bottom: 20px;
     color: #333;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: #fafafa;
+    z-index: 10;
+    padding: 10px 0;
+    margin-top: -10px;
 }
 
 .preview-container {
@@ -535,11 +542,13 @@ body {
     border-radius: 12px;
     padding: 20px;
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     position: relative;
     min-height: 400px;
-    overflow: visible;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .preview-image-wrapper {
@@ -622,6 +631,7 @@ body {
     border-radius: 8px;
     font-size: 0.9em;
     color: #666;
+    flex-shrink: 0;
 }
 
 .preview-info p {
